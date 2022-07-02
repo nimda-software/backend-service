@@ -9,8 +9,9 @@ declare global {
       DB_USERNAME: string;
       DB_PASSWORD: string;
       DB_DATABASE: string;
+      DB_SCHEMA: string;
     }
   }
 }
 
-export {}
+export {};

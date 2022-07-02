@@ -1,14 +1,10 @@
 import { applyDecorators } from '@nestjs/common';
-import {
-  ApiBadRequestResponse as OriginalApiBadRequestResponse,
-  ApiResponseOptions,
-} from '@nestjs/swagger';
+import { ApiBadRequestResponse as OriginalApiBadRequestResponse, ApiResponseOptions } from '@nestjs/swagger';
 
 export function ApiBadRequestResponse(options: ApiResponseOptions = {}) {
   return applyDecorators(
     OriginalApiBadRequestResponse({
-      description:
-        'Returns BAD_REQUEST when the payload is invalid or malformed.',
+      description: 'Returns BAD_REQUEST when the payload is invalid or malformed.',
       schema: {
         type: 'object',
         example: {

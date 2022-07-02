@@ -3,7 +3,7 @@ import { NodeEnv } from './types';
 
 export class Env {
   public static get NodeEnv(): NodeEnv {
-    const env = trim(process.env.NODE_ENV) as NodeEnv;
+    const env = trim(process.env.NODE_ENV || '') as NodeEnv;
     if (!env) throw new TypeError('NODE_ENV is not defined');
 
     return env;
@@ -17,7 +17,17 @@ export class Env {
     return Env.NodeEnv === NodeEnv.PRODUCTION;
   }
 
+  /**
+   * Environment for unit tests
+   */
   public static get isTest() {
     return Env.NodeEnv === NodeEnv.TEST;
+  }
+
+  /**
+   * Environment for E2E tests
+   */
+  public static get isE2E() {
+    return process.env.E2E === NodeEnv.E2E;
   }
 }

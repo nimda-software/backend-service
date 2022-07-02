@@ -7,11 +7,7 @@ export default Joi.object({
     .label('Node environment')
     .required(),
 
-  PORT: Joi.number()
-    .positive()
-    .less(65536)
-    .label('Server port number')
-    .required(),
+  PORT: Joi.number().positive().less(65536).label('Server port number').required(),
 
   ORIGIN: Joi.string()
     .required()
@@ -27,14 +23,8 @@ export default Joi.object({
 
   DB_HOST: Joi.string().required().label('Database host').example('localhost'),
   DB_PORT: Joi.number().required().label('Database port').example(5432),
-  DB_USERNAME: Joi.string()
-    .required()
-    .label('Database user')
-    .example('db-user'),
-  DB_PASSWORD: Joi.string()
-    .required()
-    .label('Database password')
-    .example('db-password'),
+  DB_USERNAME: Joi.string().required().label('Database user').example('db-user'),
+  DB_PASSWORD: Joi.string().required().label('Database password').example('db-password'),
   DB_DATABASE: Joi.string().required().label('Database name').example('dri'),
 });
 

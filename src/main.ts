@@ -10,7 +10,6 @@ import { configureOrigin, saveSwaggerDocument, subscribeNodeSignals, swaggerConf
 import { SwaggerModule } from '@nestjs/swagger';
 import { Env } from './common/env';
 import * as chalk from 'chalk';
-
 const program = new Command();
 program
   .description('Specify port value to override env variable PORT')
@@ -53,21 +52,28 @@ program
     type: VersioningType.URI,
     defaultVersion: '1',
   });
+
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   saveSwaggerDocument(document);
-  SwaggerModule.setup('docs', app, document);
+  SwaggerModule.setup('docs', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  });
   const appPort = parseInt(config.get('PORT'), 10);
   app.getHttpAdapter().getInstance().disable('x-powered-by');
   await app.listen(appPort, '0.0.0.0', async () => {
     const url = await app.getUrl();
-    if (Env.isDev)
-      return console.log(
-        chalk.bold(`
-          Application started at: ${url}
-          Swagger docs: ${url}/docs
-          Mode: ${chalk.bgCyan(Env.NodeEnv)}
-        `),
-      );
+    const devText = chalk.bold(`
+        Application started at: ${url}
+        Swagger docs: ${url}/docs
+        Mode: ${chalk.bgCyan(Env.NodeEnv)}
+    `);
+    if (Env.isDev) {
+      console.log(devText);
+
+      return void 0;
+    }
 
     logger.log(`Application started at: ${url}`, 'InstanceLoader');
   });

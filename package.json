@@ -12,7 +12,8 @@
     "start": "cross-env NODE_ENV=development nest start",
     "start:dev": "cross-env NODE_ENV=development nest start --watch",
     "start:debug": "cross-env NODE_ENV=debug nest start --debug --watch",
-    "start:prod": "cross-env NODE_ENV=production node dist/main",
+    "prestart:prod": "npm run migrations",
+    "start:prod": "cross-env NODE_ENV=production node --max-http-header-size=32768 dist/src/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "cross-env NODE_ENV=test jest",
     "test:ci": "cross-env NODE_ENV=test jest --ci --coverage --force-exit",
@@ -24,7 +25,14 @@
     "gen:env-types": "npx gen-env-types .env.example -o src/env.d.ts -k -e .",
     "pregen:swagger-docs": "npm run build",
     "gen:swagger-docs": "cross-env NODE_ENV=development node dist/main --swagger",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "db:diagram": "cross-env NODE_ENV=development ts-node ./node_modules/.bin/typeorm-uml src/common/setup/config/uml-diagram.config.ts -d ../../../../docs/db-diagram.svg -f svg --with-enum-values",
+    "typeorm": "cross-env NODE_ENV=development typeorm-ts-node-esm --dataSource src/common/setup/config/migration.config.ts",
+    "migrations": "npm run typeorm -- migration:run",
+    "migration:create": "cross-env NODE_ENV=development typeorm-ts-node-esm migration:create",
+    "migration:generate": "npm run typeorm -- migration:generate --pretty",
+    "migration:revert": "npm run typeorm -- migration:revert",
+    "migration:show": "npm run typeorm -- migration:show"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
@@ -32,20 +40,27 @@
     "@nestjs/core": "^8.0.0",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/swagger": "^5.2.1",
-    "@nestjs/typeorm": "^8.0.3",
+    "@nestjs/typeorm": "^8.1.4",
+    "@ntegral/nestjs-sentry": "^3.0.7",
+    "@sentry/node": "^6.19.7",
+    "@sentry/types": "^7.4.1",
     "chalk": "^4.1.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
+    "dotenv": "^16.0.1",
     "joi": "^17.6.0",
     "js-yaml": "^4.1.0",
+    "pg": "^8.7.3",
     "ramda": "^0.28.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
     "sqlite3": "^5.0.4",
     "swagger-ui-express": "^4.3.0",
-    "typeorm": "^0.2.45",
-    "typeorm-naming-strategies": "^4.1.0"
+    "typeorm": "^0.3.7",
+    "typeorm-naming-strategies": "^4.1.0",
+    "typeorm-uml": "^1.6.5",
+    "typeorm-v2": "npm:typeorm@^0.2.45"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.0.0",
@@ -54,7 +69,8 @@
     "@types/express": "^4.17.13",
     "@types/jest": "^27.0.1",
     "@types/js-yaml": "^4.0.5",
-    "@types/node": "^16.0.0",
+    "@types/node": "^17.0.41",
+    "@types/request": "^2.48.8",
     "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^4.28.2",
     "@typescript-eslint/parser": "^4.28.2",
@@ -75,59 +91,60 @@
     "tsconfig-paths": "^3.10.1",
     "typeorm-uml": "^1.6.5",
     "typescript": "^4.3.5"
-  },"jest": {
-  "moduleFileExtensions": [
-    "js",
-    "json",
-    "ts"
-  ],
-  "rootDir": "src",
-  "testRegex": ".*\\.spec\\.ts$",
-  "transform": {
-    "^.+\\.(t|j)s$": "ts-jest"
   },
-  "collectCoverageFrom": [
-    "**/*.(t|j)s"
-  ],
-  "coveragePathIgnorePatterns": [
-    "main.ts",
-    "index.ts",
-    ".*\\.d\\.ts$",
-    ".*\\.interceptor\\.ts$",
-    ".*\\.module\\.ts$",
-    ".*\\.decorator\\.ts$",
-    ".*\\.type\\.ts$",
-    ".*\\.mock\\.ts$",
-    ".*\\.enum\\.ts$",
-    ".*\\.schema\\.ts$"
-  ],
-  "coverageDirectory": "../reports/coverage",
-  "testEnvironment": "node",
-  "reporters": [
-    "default",
-    [
-      "jest-junit",
-      {
-        "suiteName": "jest tests",
-        "outputDirectory": "reports",
-        "outputName": "junit.xml",
-        "uniqueOutputName": "false",
-        "classNameTemplate": "{classname}-{title}",
-        "titleTemplate": "{classname}-{title}",
-        "ancestorSeparator": " › ",
-        "usePathForSuiteName": "true"
-      }
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
+    "coveragePathIgnorePatterns": [
+      "main.ts",
+      "index.ts",
+      ".*\\.d\\.ts$",
+      ".*\\.interceptor\\.ts$",
+      ".*\\.module\\.ts$",
+      ".*\\.decorator\\.ts$",
+      ".*\\.type\\.ts$",
+      ".*\\.mock\\.ts$",
+      ".*\\.enum\\.ts$",
+      ".*\\.schema\\.ts$"
+    ],
+    "coverageDirectory": "../reports/coverage",
+    "testEnvironment": "node",
+    "reporters": [
+      "default",
+      [
+        "jest-junit",
+        {
+          "suiteName": "jest tests",
+          "outputDirectory": "reports",
+          "outputName": "junit.xml",
+          "uniqueOutputName": "false",
+          "classNameTemplate": "{classname}-{title}",
+          "titleTemplate": "{classname}-{title}",
+          "ancestorSeparator": " › ",
+          "usePathForSuiteName": "true"
+        }
+      ]
+    ],
+    "coverageReporters": [
+      "json",
+      "lcov",
+      "text",
+      "text-summary",
+      "clover",
+      "cobertura"
     ]
-  ],
-  "coverageReporters": [
-    "json",
-    "lcov",
-    "text",
-    "text-summary",
-    "clover",
-    "cobertura"
-  ]
-},
+  },
   "engines": {
     "node": "17.5.0",
     "npm": "8.4.1"

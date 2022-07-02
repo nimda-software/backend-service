@@ -23,6 +23,10 @@ describe('Env', () => {
     expect(Env.isTest).toBe(true);
   });
 
+  it('should test isE2E', function () {
+    expect(Env.isE2E).toBeFalsy();
+  });
+
   it('should throw when no NODE_ENV defined', function () {
     process.env.NODE_ENV = '';
     expect(() => Env.NodeEnv).toThrowError('NODE_ENV is not defined');
