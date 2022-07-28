@@ -1,5 +1,4 @@
 import path = require('path');
-import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { config } from 'dotenv';
 
 config({ path: '.env.development' });
@@ -22,7 +21,6 @@ export = {
   schema: process.env.PGSCHEMA,
   entities: [path.join(__dirname, '../../../../src/**/*.entity{.ts,.js}')],
   logging: 'all',
-  namingStrategy: new SnakeNamingStrategy(),
   cli: {
     migrationsDir: 'migrations',
   },

@@ -1,5 +1,4 @@
 import { Env } from '../../env';
-import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { resolveEntityPath } from './config.utils';
 import { config } from 'dotenv';
@@ -22,6 +21,5 @@ export const ormConfig: TypeOrmModuleOptions = {
     fsync: true,
   }),
   entities: [resolveEntityPath()],
-  namingStrategy: new SnakeNamingStrategy(),
   logging: Env.isDev ? 'all' : ['error'],
 };

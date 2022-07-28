@@ -1,8 +1,8 @@
 {
   "name": "backend-service",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Backend service for the application",
+  "author": "n1md7",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

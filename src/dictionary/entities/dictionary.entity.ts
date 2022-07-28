@@ -1,12 +1,12 @@
-import { Entity, Generated, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { TimestampsEntity } from '../../common/entities/timestamps.entity';
-import { ApiProperty } from '@nestjs/swagger';
+import { Entity, Generated, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Column } from '../../common/decorators';
-import { Language } from '../translate.enum';
-import { Dictionary } from '../../dictionary/entities/dictionary.entity';
+import { TimestampsEntity } from '../../common/entities/timestamps.entity';
+import { Language } from '../../translate/translate.enum';
+import { ApiProperty } from '@nestjs/swagger';
+import { Translate } from '../../translate/entities/translate.entity';
 
-@Entity({ name: 'translations' })
-export class Translate extends TimestampsEntity {
+@Entity({ name: 'dictionary' })
+export class Dictionary extends TimestampsEntity {
   @ApiProperty({ example: 1, description: 'Primary key' })
   @PrimaryGeneratedColumn()
   id: number;
@@ -16,11 +16,11 @@ export class Translate extends TimestampsEntity {
   @Column({ type: 'uuid', nullable: false })
   uuid: string;
 
-  @ApiProperty({ example: 'Hello there', description: 'Translation text' })
+  @ApiProperty({ example: 'Hello there', description: 'Word or sentence' })
   @Column({ type: 'text', nullable: false })
   value: string;
 
-  @ApiProperty({ example: '', description: 'Translation description, with examples' })
+  @ApiProperty({ example: 'Some explanation', description: 'Dictionary word/sentence description, with examples' })
   @Column({ type: 'text', nullable: true })
   description: string;
 
@@ -28,6 +28,6 @@ export class Translate extends TimestampsEntity {
   @Column({ type: 'enum', enum: Language, nullable: false })
   language: Language;
 
-  @ManyToOne(() => Dictionary, (dictionary) => dictionary.translations)
-  dictionary: Dictionary;
+  @OneToMany(() => Translate, (translate) => translate.dictionary)
+  translations: Translate[];
 }
