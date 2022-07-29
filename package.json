@@ -1,5 +1,5 @@
 {
-  "name": "backend-service",
+  "name": "@megrulad-ge/backend-service",
   "version": "0.0.3",
   "description": "Backend service for the application",
   "author": "n1md7",
