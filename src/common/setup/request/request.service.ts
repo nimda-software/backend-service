@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { Request } from 'express';
-import * as Joi from 'joi';
+import Joi from 'joi';
+import { RequestHeader } from './request.enum';
 
 @Injectable()
 export class RequestService {
-  private static readonly REQUEST_ID_HEADER = 'x-request-id';
-  private static readonly validationSchema = Joi.string().uuid({
-    version: 'uuidv4',
-  });
+  private static readonly REQUEST_ID_HEADER = RequestHeader.RequestId;
+  private static readonly validationSchema = Joi.string().min(1).max(256);
 
   public constructor(private readonly request: Request) {}
 
@@ -24,8 +23,7 @@ export class RequestService {
   }
 
   public static injectRequestId(request: Request): void {
-    request.headers[RequestService.REQUEST_ID_HEADER] =
-      RequestService.forgeReqId();
+    request.headers[RequestService.REQUEST_ID_HEADER] = RequestService.forgeReqId();
   }
 
   public getRequestId(): string {

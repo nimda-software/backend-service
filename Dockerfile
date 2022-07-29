@@ -1,5 +1,5 @@
 ARG BUILD_ENV
-ARG BUILD_IMAGE="node:17.5.0-alpine"
+ARG BUILD_IMAGE="node:18.6.0-alpine"
 ARG PORT=8300
 
 FROM $BUILD_IMAGE as server

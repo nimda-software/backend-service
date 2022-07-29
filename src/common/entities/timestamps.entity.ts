@@ -1,4 +1,4 @@
-import { CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { CreateDateColumn, UpdateDateColumn } from '../decorators';
 import { ApiProperty } from '@nestjs/swagger';
 
 export abstract class TimestampsEntity {

@@ -1,18 +1,14 @@
 import { LogLabel, LogType } from './logger.enum';
 import { RequestId } from './logger.type';
-import * as chalk from 'chalk';
 import { Env } from '../../env';
+import chalk from 'chalk';
 
 export class LoggerUtils {
   public static informationLetter([firstLetter]: string): string {
     return firstLetter.toUpperCase();
   }
 
-  public static format(
-    level: LogType,
-    context: LogLabel | RequestId | string,
-    message: unknown,
-  ): string {
+  public static format(level: LogType, context: LogLabel | RequestId | string, message: unknown): string {
     const I = LoggerUtils.informationLetter(level);
     const T = new Date().toISOString();
     const P = process.pid;
@@ -73,7 +69,7 @@ export class LoggerUtils {
   public static removeBearerToken(value: string): string {
     if (Env.isDev) return value;
 
-    return value.replace(/Bearer [\w-]*\.[\w-]*\.[\w-]*/, 'Bearer [FILTERED]');
+    return value?.replace(/Bearer [A-Za-z0-9-_]*\.[A-Za-z0-9-_]*\.[A-Za-z0-9-_]*/, 'Bearer [FILTERED]');
   }
 }
 

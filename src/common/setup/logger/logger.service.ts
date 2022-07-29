@@ -1,18 +1,18 @@
 import { Injectable, LoggerService as ILogger } from '@nestjs/common';
-import { RequestService } from '../request/request.service';
+import { RequestService } from '../request';
 import { LoggerUtils } from './logger.utils';
 import { LogType } from './logger.enum';
 import { Env } from '../../env';
 
 /**
- * @Description Custom Logger service with built-in request ID logging. NB! Do not use outside of the
- * controllers(use in controllers with the caution). Instead reference Nest Logger service. This service is
- * dependant on Request service(RequestService) which is scoped to REQUEST. And it will result creating new
- * instances of the service(s) for each request. So, using it in the services is prohibited unless you know what you
- * are doing.
+ * Custom Logger service with built-in request ID logging.
+ *
+ *
+ * NB! Do not use outside the controllers(use in controllers with the caution). Instead of this service reference Nest Logger service.
+ * This service is dependent on Request service(RequestService) which is scoped to REQUEST. And it will result creating new
+ * instances of the service(s) for each request. So, using it in the services is prohibited unless you know what you are doing.
  *
  * Following in-house requirements:
- * @link https://rangeforce.atlassian.net/wiki/spaces/PLAT/pages/2065367045/Requirements+for+log+output
  * @export
  * @class LoggerService
  * @implements {ILogger}
@@ -45,10 +45,7 @@ export class LoggerService implements ILogger {
 
   /** Kibana filter support `logLevel` */
   error(message: unknown, context?: string, trace?: string) {
-    console.error(
-      this.format(LogType.ERROR, LoggerUtils.stringify(message), context) +
-        ` ${trace ?? ''}`,
-    );
+    console.error(this.format(LogType.ERROR, LoggerUtils.stringify(message), context) + ` ${trace ?? ''}`);
   }
 
   /** Kibana filter support `logLevel` */
@@ -61,8 +58,9 @@ export class LoggerService implements ILogger {
     console.error(this.format(LogType.FATAL, message, context));
   }
 
+  /** If context provided override request id  */
   private format(level: LogType, message: unknown, context?: string) {
-    context = this.request?.getRequestId() || context;
+    context = context || this.request?.getRequestId() || '';
 
     return LoggerUtils.format(level, context, message);
   }

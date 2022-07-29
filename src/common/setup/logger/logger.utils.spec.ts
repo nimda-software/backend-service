@@ -32,6 +32,7 @@ describe('LoggerUtils', () => {
   describe.each([
     [LogType.DEBUG, 'debug-message'],
     [LogType.ERROR, 'error-message'],
+    [LogType.WARN, 'warn-message'],
     [LogType.FATAL, 'fatal-message'],
     [LogType.INFO, 'info-message'],
     [LogType.LOG, 'trace-message'],
@@ -40,6 +41,12 @@ describe('LoggerUtils', () => {
     it(`should format a message for ${type}`, () => {
       const result = LoggerUtils.format(type, LogLabel.Http, expected);
       expect(result).toMatch(new RegExp(expected));
+    });
+    it(`should format a message for ${type} in Dev`, () => {
+      process.env.NODE_ENV = NodeEnv.DEVELOPMENT;
+      const result = LoggerUtils.format(type, LogLabel.Http, expected);
+      expect(result).toMatch(new RegExp(expected));
+      process.env.NODE_ENV = NodeEnv.TEST;
     });
   });
 
@@ -53,6 +60,13 @@ describe('LoggerUtils', () => {
     it(`should mask a value for ${value}`, () => {
       const result = LoggerUtils.mask(value);
       expect(result).toBe(expected);
+    });
+
+    it(`should mask a value for ${value} - Dev`, () => {
+      process.env.NODE_ENV = NodeEnv.DEVELOPMENT;
+      const result = LoggerUtils.mask(value);
+      expect(result).not.toBe(expected);
+      process.env.NODE_ENV = NodeEnv.TEST;
     });
   });
 
@@ -104,6 +118,39 @@ describe('LoggerUtils', () => {
         },
       });
       expect(result).toBe(expected);
+    });
+
+    it('should not remove bearer token value', function () {
+      process.env.NODE_ENV = NodeEnv.DEVELOPMENT;
+      const value = {
+        headers: {
+          authorization: 'Bearer AAA.BBB.CCC',
+        },
+      };
+      const result = LoggerUtils.stringify(value);
+      const expected = JSON.stringify({
+        headers: {
+          authorization: 'Bearer [FILTERED]',
+        },
+      });
+      expect(result).not.toBe(expected);
+      process.env.NODE_ENV = NodeEnv.TEST;
+    });
+  });
+
+  describe('Verify removeBearerToken', function () {
+    it('should remove bearer token value', function () {
+      const value = 'Bearer AAA.BBB.CCC';
+      const result = LoggerUtils.removeBearerToken(value);
+      expect(result).toBe('Bearer [FILTERED]');
+    });
+
+    it('should not remove bearer token value', function () {
+      process.env.NODE_ENV = NodeEnv.DEVELOPMENT;
+      const value = 'Bearer AAA.BBB.CCC';
+      const result = LoggerUtils.removeBearerToken(value);
+      expect(result).toBe(value);
+      process.env.NODE_ENV = NodeEnv.TEST;
     });
   });
 });

@@ -1,80 +1,33 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { Command } from 'commander';
-import { LoggerService } from './common/setup/logger/logger.service';
-import { ConfigService } from '@nestjs/config';
-import { ValidationPipe, VersioningType } from '@nestjs/common';
-import { RequestInterceptor } from './common/interceptors/request.interceptor';
-import { ExceptionInterceptor } from './common/interceptors/exception-handler.interceptor';
-import { configureOrigin, saveSwaggerDocument, subscribeNodeSignals, swaggerConfig } from './common/bootstrap';
-import { SwaggerModule } from '@nestjs/swagger';
-import { Env } from './common/env';
-import * as chalk from 'chalk';
-const program = new Command();
-program
-  .description('Specify port value to override env variable PORT')
-  .option('-p, --port <port>', 'Port to listen')
-  .option('-s, --swagger', 'Signal to generate swagger documentation')
-  .action(() => {
-    if (program.swagger) process.env.SWAGGER = 'generate';
-    if (!isNaN(+program.port)) {
-      console.log(chalk.yellow('Port value has been overridden by command line argument. Port: ' + program.port));
-      process.env.PORT = program.port;
-    }
-  })
-  .parse(process.argv);
+#!/usr/bin/env node
 
-(async function bootstrap() {
-  const scriptMode = process.env.SWAGGER === 'generate';
-  const app = await NestFactory.create(AppModule);
-  const logger = app.get(LoggerService);
-  const config = app.get(ConfigService);
-  subscribeNodeSignals(logger);
-  app.enableCors({
-    origin: configureOrigin,
-    methods: 'GET,POST,PUT,PATCH,DELETE,OPTIONS',
-    allowedHeaders: 'Authorization, Content-Type',
-    exposedHeaders: 'Authorization',
-    credentials: true,
-  });
-  app.useLogger(scriptMode ? false : logger);
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      whitelist: true,
-      forbidNonWhitelisted: true,
-    }),
-  );
-  app.useGlobalInterceptors(new RequestInterceptor(), new ExceptionInterceptor());
-  app.setGlobalPrefix('/api');
-  app.enableVersioning({
-    prefix: 'v',
-    type: VersioningType.URI,
-    defaultVersion: '1',
-  });
+import cli from './cli';
+cli.run();
 
-  const document = SwaggerModule.createDocument(app, swaggerConfig);
-  saveSwaggerDocument(document);
-  SwaggerModule.setup('docs', app, document, {
-    swaggerOptions: {
-      persistAuthorization: true,
-    },
-  });
-  const appPort = parseInt(config.get('PORT'), 10);
-  app.getHttpAdapter().getInstance().disable('x-powered-by');
-  await app.listen(appPort, '0.0.0.0', async () => {
-    const url = await app.getUrl();
-    const devText = chalk.bold(`
-        Application started at: ${url}
-        Swagger docs: ${url}/docs
-        Mode: ${chalk.bgCyan(Env.NodeEnv)}
-    `);
-    if (Env.isDev) {
-      console.log(devText);
+import { LoggerUtils } from './common/setup/logger';
+import { bootstrap } from './common/bootstrap';
+import { Logger } from '@nestjs/common';
+import cluster from 'cluster';
+import R from 'ramda';
+import os from 'os';
 
-      return void 0;
-    }
+(async () => {
+  const threads = os.cpus().length;
+  const target = parseInt(process.env.THREADS, 10);
+  if (target <= 1) return bootstrap();
+  if (cluster.isWorker) return bootstrap();
 
-    logger.log(`Application started at: ${url}`, 'InstanceLoader');
+  // It won't run in multi-threaded mode
+  // unless param is passed from cli as -t/--threads <number> or as env THREADS
+  // If param is not passed, it will run in single-threaded mode.
+
+  // Take no more than available threads
+  const maxThreads = Math.min(target, threads);
+  R.range(1, maxThreads).forEach(() => cluster.fork());
+
+  Logger.log(`Primary process:${process.pid} is running`, 'Master');
+  Logger.log(`Total cluster instances: ${maxThreads - 1}`, 'Master');
+
+  cluster.on('exit', (worker, code, signal) => {
+    Logger.log(`worker ${worker.process.pid} died. ${LoggerUtils.stringify({ code, signal })}`, 'Master');
   });
 })();

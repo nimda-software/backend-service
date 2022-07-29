@@ -1,3 +1,21 @@
+<p align="center">
+  <a href='https://github.com/megrulad-ge/backend-service/blob/master/.npmrc#L1'>
+    <img src='https://img.shields.io/badge/NodeJs-v18.6.0-green.svg' alt='NodeJs-18.6.0' />
+  </a>
+  <a href='https://github.com/megrulad-ge/backend-service/blob/master/.npmrc#L2'>
+    <img src='https://img.shields.io/badge/NPM-v8.13.2-green.svg' alt='NPM-8.13.2' />
+  </a>
+  <a href='https://nestjs.com/'>
+    <img src='https://img.shields.io/badge/NestJs-v9.0.5-green.svg' alt='NestJs-9.0.5' />
+  </a>
+  <a href='https://github.com/megrulad-ge/backend-service/blob/master/docs/swagger.yaml'>
+    <img src='https://img.shields.io/badge/Swagger-yaml-green.svg' alt='Swagger-yaml' />
+  </a>
+  <a href='megrulad-ge.github.io/backend-service'>
+    <img src='https://img.shields.io/badge/Compo-docs-green.svg' alt='Compo-docs' />
+  </a>
+</p>
+
 ## Description
 
 Template repository for backend services. With required boilerplate code.

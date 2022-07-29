@@ -3,8 +3,8 @@ name: NPM publish
 on:
   release:
     types: [created]
-env: 
-  NODE_VERSION: 17.5.0
+env:
+  NODE_VERSION: 18.6.0
   REGISTRY_URL: https://npm.pkg.github.com/
 
 jobs:

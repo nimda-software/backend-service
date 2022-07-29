@@ -8,5 +8,5 @@ export const resolveEntityPath = () => {
   if (Env.isE2E) return 'src/**/*.entity.ts';
 
   // Either NodeEnv.PRODUCTION or NodeEnv.DEVELOPMENT
-  return 'dist/**/*.entity.js';
+  return 'dist/src/**/*.entity.js';
 };

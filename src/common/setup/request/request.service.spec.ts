@@ -19,33 +19,43 @@ describe('RequestService', () => {
     expect(requestService).toBeDefined();
   });
 
-  describe('hasRequestId', () => {
-    it('should return false', () => {
+  describe.each([
+    [{}, false],
+    [{ 'x-request-id': '' }, false],
+    [{ 'x-request-id': '0' }, true],
+    [{ 'x-request-id': 'a' }, true],
+    [{ 'x-request-id': 'A' }, true],
+    [{ 'x-request-id': '00' }, true],
+    [{ 'x-request-id': 'aa' }, true],
+    [{ 'x-request-id': 'AA' }, true],
+    [{ 'x-request-id': '000' }, true],
+    [{ 'x-request-id': 'aaa' }, true],
+    [{ 'x-request-id': 'AAA' }, true],
+    [{ 'x-request-id': 'aaa#' }, true],
+    [{ 'x-request-id': uuidv4() }, true],
+    [{ 'x-request-id': '#_bbb_#' }, true],
+    [{ 'x-request-id': '!123@321!' }, true],
+    [{ 'x-request-id': '@#$%^&*()#' }, true],
+    [{ 'x-request-id': 'c97efe5412c8bd8214ea4bc08ef0066' }, true],
+    [{ 'x-request-id': 'sd7eb_fe5412c8bd821_4_ea4bcf0066' }, true],
+    [{ 'x-request-id': 'c97eb-fe54-12c8bd-8214ea4bc08ef0066' }, true],
+    [
+      {
+        'x-request-id':
+          'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' +
+          'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' +
+          'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' +
+          'aaaaaaaaaaaa', // more than 256
+      },
+      false,
+    ],
+  ])('hasRequestId [%o]', (headers, expected) => {
+    test(`should return ${expected}`, () => {
       const request = {
-        get: () => jest.fn(),
-        headers: {},
+        get: (id) => request.headers[id],
+        headers,
       } as unknown as Request;
-      expect(RequestService.hasRequestId(request)).toBeFalsy();
-    });
-
-    it('should return false when reqId present but not UUID type', () => {
-      const request = {
-        get: () => request.headers['x-request-id'],
-        headers: {
-          'x-request-id': '123',
-        },
-      } as unknown as Request;
-      expect(RequestService.hasRequestId(request)).toBeFalsy();
-    });
-
-    it('should return true when reqId present and UUID type', () => {
-      const request = {
-        get: () => request.headers['x-request-id'],
-        headers: {
-          'x-request-id': uuidv4(),
-        },
-      } as unknown as Request;
-      expect(RequestService.hasRequestId(request)).toBeTruthy();
+      expect(RequestService.hasRequestId(request)).toBe(expected);
     });
   });
 
@@ -70,9 +80,7 @@ describe('RequestService', () => {
         },
       } as unknown as Request;
       const requestService = new RequestService(request);
-      expect(requestService.getRequestId()).toEqual(
-        request.headers['x-request-id'],
-      );
+      expect(requestService.getRequestId()).toEqual(request.headers['x-request-id']);
     });
   });
 });
