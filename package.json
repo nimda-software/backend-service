@@ -3,7 +3,7 @@
   "version": "0.0.2",
   "description": "Backend service for the application",
   "author": "n1md7",
-  "private": true,
+  "private": false,
   "bin": {
     "backend-service": "dist/main.js"
   },
