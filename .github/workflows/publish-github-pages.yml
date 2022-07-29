@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Build static documents
-        run: gen:docs
+        run: npm run gen:docs
 
       - name: Init new repo in public folder and commit generated files
         run: |
