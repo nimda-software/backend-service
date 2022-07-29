@@ -23,10 +23,13 @@ Template repository for backend services. With required boilerplate code.
 ## Installation
 
 ```bash
+# Set right NodeJS version
+$ nvm use
+# Install dependencies
 $ npm install
 ```
 
-## Running the app
+## Running the service
 
 ```bash
 # development
