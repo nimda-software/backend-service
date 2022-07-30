@@ -6,5 +6,5 @@ export interface DictionaryProperties {
 interface EditedBy {
   userId: number;
   date: Date;
-  changeLogId: number;
+  changeLogId?: number;
 }

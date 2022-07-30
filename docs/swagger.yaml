@@ -96,35 +96,126 @@ paths:
               $ref: '#/components/schemas/CreateDictionaryRequest'
       responses:
         '201':
-          description: ''
+          description: Returns CREATED when successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateDictionaryResponse'
+        '400':
+          description: Returns BAD_REQUEST when the payload is invalid or malformed.
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  statusCode: 400
+                  message:
+                    - name should not be empty
+                    - name should be string
+                  error: Bad Request
+                properties:
+                  message:
+                    type: array
+                  statusCode:
+                    type: number
+                  error:
+                    type: string
+        '401':
+          description: 'Returns UNAUTHORIZED when JWT is not provided, invalid or expired.'
+          content:
+            application/json:
+              schema:
+                example:
+                  statusCode: 401
+                  message: Unauthorized
+        '403':
+          description: Returns FORBIDDEN when JWT is valid but user is not authorized.
+          content:
+            application/json:
+              schema:
+                example:
+                  statusCode: 403
+                  message: Forbidden
       tags: &ref_1
         - Dictionary
+      security:
+        - bearer: []
     get:
       operationId: DictionaryController_findAll
       parameters: []
       responses:
         '200':
-          description: ''
+          description: Returns OK when successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FetchDictionaryResponse'
+        '400':
+          description: Returns BAD_REQUEST when the payload is invalid or malformed.
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  statusCode: 400
+                  message:
+                    - name should not be empty
+                    - name should be string
+                  error: Bad Request
+                properties:
+                  message:
+                    type: array
+                  statusCode:
+                    type: number
+                  error:
+                    type: string
       tags: *ref_1
-  '/api/v1/dictionary/{id}':
+  '/api/v1/dictionary/{uuid}':
     get:
       operationId: DictionaryController_findOne
       parameters:
-        - name: id
+        - name: uuid
           required: true
           in: path
+          description: Dictionary id
           schema:
             type: string
       responses:
         '200':
-          description: ''
+          description: Returns OK when successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FetchDictionaryResponse'
+        '400':
+          description: Returns BAD_REQUEST when the payload is invalid or malformed.
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  statusCode: 400
+                  message:
+                    - name should not be empty
+                    - name should be string
+                  error: Bad Request
+                properties:
+                  message:
+                    type: array
+                  statusCode:
+                    type: number
+                  error:
+                    type: string
       tags: *ref_1
     patch:
       operationId: DictionaryController_update
       parameters:
-        - name: id
+        - name: uuid
           required: true
           in: path
+          description: Dictionary id
           schema:
             type: string
       requestBody:
@@ -132,23 +223,98 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateDictionaryRequest'
+              $ref: '#/components/schemas/UpdateDictionaryRequestBody'
       responses:
-        '200':
-          description: ''
+        '204':
+          description: Returns NO_CONTENT when successful
+        '400':
+          description: Returns BAD_REQUEST when the payload is invalid or malformed.
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  statusCode: 400
+                  message:
+                    - name should not be empty
+                    - name should be string
+                  error: Bad Request
+                properties:
+                  message:
+                    type: array
+                  statusCode:
+                    type: number
+                  error:
+                    type: string
+        '401':
+          description: 'Returns UNAUTHORIZED when JWT is not provided, invalid or expired.'
+          content:
+            application/json:
+              schema:
+                example:
+                  statusCode: 401
+                  message: Unauthorized
+        '403':
+          description: Returns FORBIDDEN when JWT is valid but user is not authorized.
+          content:
+            application/json:
+              schema:
+                example:
+                  statusCode: 403
+                  message: Forbidden
       tags: *ref_1
+      security:
+        - bearer: []
     delete:
       operationId: DictionaryController_remove
       parameters:
-        - name: id
+        - name: uuid
           required: true
           in: path
+          description: Dictionary id
           schema:
             type: string
       responses:
-        '200':
-          description: ''
+        '202':
+          description: Returns ACCEPTED when successful
+        '400':
+          description: Returns BAD_REQUEST when the payload is invalid or malformed.
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  statusCode: 400
+                  message:
+                    - name should not be empty
+                    - name should be string
+                  error: Bad Request
+                properties:
+                  message:
+                    type: array
+                  statusCode:
+                    type: number
+                  error:
+                    type: string
+        '401':
+          description: 'Returns UNAUTHORIZED when JWT is not provided, invalid or expired.'
+          content:
+            application/json:
+              schema:
+                example:
+                  statusCode: 401
+                  message: Unauthorized
+        '403':
+          description: Returns FORBIDDEN when JWT is valid but user is not authorized.
+          content:
+            application/json:
+              schema:
+                example:
+                  statusCode: 403
+                  message: Forbidden
       tags: *ref_1
+      security:
+        - bearer: []
 info:
   title: Megrulad.ge Backend Service
   description: Main translation backend service
@@ -202,7 +368,55 @@ components:
       required:
         - value
         - language
-    UpdateDictionaryRequest:
+    CreateDictionaryResponse:
+      type: object
+      properties:
+        uuid:
+          type: string
+          description: UUID string
+          example: 12345678-1234-1234-1234-123456789012
+        value:
+          type: string
+          example: Hello there
+          description: Word or sentence
+        description:
+          type: string
+          example: Some explanation
+          description: 'Dictionary word/sentence description, with examples'
+        language:
+          type: string
+          example: en
+          description: Language code
+      required:
+        - uuid
+        - value
+        - description
+        - language
+    FetchDictionaryResponse:
+      type: object
+      properties:
+        uuid:
+          type: string
+          description: UUID string
+          example: 12345678-1234-1234-1234-123456789012
+        value:
+          type: string
+          example: Hello there
+          description: Word or sentence
+        description:
+          type: string
+          example: Some explanation
+          description: 'Dictionary word/sentence description, with examples'
+        language:
+          type: string
+          example: en
+          description: Language code
+      required:
+        - uuid
+        - value
+        - description
+        - language
+    UpdateDictionaryRequestBody:
       type: object
       properties:
         value:

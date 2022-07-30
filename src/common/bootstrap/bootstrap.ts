@@ -1,10 +1,10 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from '../../app.module';
 import { LoggerService } from '../setup/logger';
 import { ConfigService } from '@nestjs/config';
 import { subscribeNodeSignals } from './signals';
 import { configureOrigin } from './configure-origin';
-import { ValidationPipe, VersioningType } from '@nestjs/common';
+import { ClassSerializerInterceptor, ValidationPipe, VersioningType } from '@nestjs/common';
 import { RequestInterceptor } from '../interceptors/request.interceptor';
 import { ExceptionInterceptor } from '../interceptors/exception-handler.interceptor';
 import { SwaggerModule } from '@nestjs/swagger';
@@ -33,7 +33,11 @@ export const bootstrap = async () => {
       forbidNonWhitelisted: true,
     }),
   );
-  app.useGlobalInterceptors(new RequestInterceptor(), new ExceptionInterceptor());
+  app.useGlobalInterceptors(
+    new RequestInterceptor(),
+    new ExceptionInterceptor(),
+    new ClassSerializerInterceptor(app.get(Reflector)),
+  );
   app.setGlobalPrefix('/api');
   app.enableVersioning({
     prefix: 'v',

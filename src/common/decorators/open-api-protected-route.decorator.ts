@@ -1,7 +1,7 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiBearerAuth, ApiForbiddenResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiForbiddenResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
-export function ApiProtected(tag: string) {
+export function ApiProtected() {
   return applyDecorators(
     ApiBearerAuth(),
     ApiUnauthorizedResponse({
@@ -22,6 +22,5 @@ export function ApiProtected(tag: string) {
         },
       },
     }),
-    ApiTags(tag),
   );
 }

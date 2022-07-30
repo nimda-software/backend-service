@@ -1,31 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import { CreateDictionaryRequest } from './request/create-dictionary.request';
-import { UpdateDictionaryRequest } from './request/update-dictionary.request';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Dictionary } from './entities/dictionary.entity';
-import { Repository } from 'typeorm-v2';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class DictionaryService {
   constructor(@InjectRepository(Dictionary) private readonly dictionary: Repository<Dictionary>) {}
 
-  create(createDictionaryDto: CreateDictionaryRequest) {
-    return this.dictionary.save({ ...createDictionaryDto, createdBy: -1 });
+  create(payload: Partial<Dictionary>) {
+    return this.dictionary.save(payload);
   }
 
   findAll() {
-    return this.dictionary.find();
+    return this.dictionary.find({ select: ['uuid', 'value', 'description', 'language'] });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} dictionary`;
+  findOne(uuid: string) {
+    return this.dictionary.findOne({ where: { uuid }, select: ['uuid', 'value', 'description', 'language'] });
   }
 
-  update(id: number, updateDictionaryDto: UpdateDictionaryRequest) {
-    return `This action updates a #${id} dictionary`;
+  update(uuid: string, payload: Partial<Dictionary>) {
+    return this.dictionary.update({ uuid }, payload);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} dictionary`;
+  remove(uuid: string) {
+    return this.dictionary.delete({ uuid });
   }
 }
