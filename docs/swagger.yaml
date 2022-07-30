@@ -19,31 +19,31 @@ paths:
                     example: alive
       tags:
         - Health
-  /api/v1/translate:
+  /api/v1/translation:
     post:
-      operationId: TranslateController_create
+      operationId: TranslationController_create
       parameters: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateTranslateRequest'
+              $ref: '#/components/schemas/CreateTranslationRequest'
       responses:
         '201':
           description: ''
       tags: &ref_0
-        - Translate
+        - Translation
     get:
-      operationId: TranslateController_findAll
+      operationId: TranslationController_findAll
       parameters: []
       responses:
         '200':
           description: ''
       tags: *ref_0
-  '/api/v1/translate/{id}':
+  '/api/v1/translation/{id}':
     get:
-      operationId: TranslateController_findOne
+      operationId: TranslationController_findOne
       parameters:
         - name: id
           required: true
@@ -55,7 +55,7 @@ paths:
           description: ''
       tags: *ref_0
     patch:
-      operationId: TranslateController_update
+      operationId: TranslationController_update
       parameters:
         - name: id
           required: true
@@ -67,13 +67,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateTranslateRequest'
+              $ref: '#/components/schemas/UpdateTranslationRequest'
       responses:
         '200':
           description: ''
       tags: *ref_0
     delete:
-      operationId: TranslateController_remove
+      operationId: TranslationController_remove
       parameters:
         - name: id
           required: true
@@ -152,7 +152,7 @@ paths:
 info:
   title: Megrulad.ge Backend Service
   description: Main translation backend service
-  version: 0.0.1
+  version: 0.0.3
   contact: {}
 tags: []
 servers: []
@@ -166,15 +166,71 @@ components:
       description: Enter JWT auth token
       in: header
   schemas:
-    CreateTranslateRequest:
+    CreateTranslationRequest:
       type: object
       properties: {}
-    UpdateTranslateRequest:
+    UpdateTranslationRequest:
       type: object
       properties: {}
     CreateDictionaryRequest:
       type: object
-      properties: {}
+      properties:
+        value:
+          type: string
+          example: Hello there
+          description: Word or sentence
+        description:
+          type: string
+          example: Some explanation
+          description: 'Dictionary word/sentence description, with examples'
+        language:
+          type: string
+          example: en
+          description: Language code
+          enum: &ref_2
+            - en
+            - ru
+            - ka
+            - me
+            - sv
+        source:
+          type: string
+          description: >-
+            Source of the word/sentence, whether it's individually contributed
+            by user, or from a dictionary
+          default: null
+      required:
+        - value
+        - language
     UpdateDictionaryRequest:
       type: object
-      properties: {}
+      properties:
+        value:
+          type: string
+          example: Hello there
+          description: Word or sentence
+        description:
+          type: string
+          example: Some explanation
+          description: 'Dictionary word/sentence description, with examples'
+        language:
+          type: string
+          example: en
+          description: Language code
+          enum: *ref_2
+        source:
+          type: string
+          description: >-
+            Source of the word/sentence, whether it's individually contributed
+            by user, or from a dictionary
+          default: null
+        status:
+          type: string
+          description: Translation status
+          enum:
+            - ACTIVE
+            - INACTIVE
+            - DELETED
+            - PENDING
+            - REJECTED
+            - HIDDEN

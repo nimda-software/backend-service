@@ -1,16 +1,16 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { TranslateService } from './translate.service';
-import { CreateTranslateRequest } from './request/create-translate.request';
-import { UpdateTranslateRequest } from './request/update-translate.request';
+import { TranslationService } from './translation.service';
+import { CreateTranslationRequest } from './request/create-translation.request';
+import { UpdateTranslationRequest } from './request/update-translation.request';
 import { ApiTags } from '@nestjs/swagger';
 
-@ApiTags('Translate')
-@Controller('translate')
-export class TranslateController {
-  constructor(private readonly translateService: TranslateService) {}
+@ApiTags('Translation')
+@Controller('translation')
+export class TranslationController {
+  constructor(private readonly translateService: TranslationService) {}
 
   @Post()
-  create(@Body() createTranslateDto: CreateTranslateRequest) {
+  create(@Body() createTranslateDto: CreateTranslationRequest) {
     return this.translateService.create(createTranslateDto);
   }
 
@@ -25,7 +25,7 @@ export class TranslateController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTranslateDto: UpdateTranslateRequest) {
+  update(@Param('id') id: string, @Body() updateTranslateDto: UpdateTranslationRequest) {
     return this.translateService.update(+id, updateTranslateDto);
   }
 

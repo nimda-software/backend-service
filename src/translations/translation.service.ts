@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CreateTranslateRequest } from './request/create-translate.request';
-import { UpdateTranslateRequest } from './request/update-translate.request';
+import { CreateTranslationRequest } from './request/create-translation.request';
+import { UpdateTranslationRequest } from './request/update-translation.request';
 
 @Injectable()
-export class TranslateService {
-  create(createTranslateDto: CreateTranslateRequest) {
+export class TranslationService {
+  create(createTranslateDto: CreateTranslationRequest) {
     return 'This action adds a new translate';
   }
 
@@ -16,7 +16,7 @@ export class TranslateService {
     return `This action returns a #${id} translate`;
   }
 
-  update(id: number, updateTranslateDto: UpdateTranslateRequest) {
+  update(id: number, updateTranslateDto: UpdateTranslationRequest) {
     return `This action updates a #${id} translate`;
   }
 

@@ -1,8 +1,8 @@
 import { Entity, Generated, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
 import { Column, CreateDateColumn, UpdateDateColumn } from '../../common/decorators';
-import { Language } from '../../translations/translate.enum';
+import { Language } from '../../translations/translation.enum';
 import { ApiProperty } from '@nestjs/swagger';
-import { Translation } from '../../translations/entities/translate.entity';
+import { Translation } from '../../translations/entities/translation.entity';
 import { TimestampsInterface } from '../../common/interfaces/timestamps.interface';
 import { STATUS } from '../../common/enums/status.enum';
 import { DictionaryProperties } from '../interfaces/dictionary-properties.interface';
