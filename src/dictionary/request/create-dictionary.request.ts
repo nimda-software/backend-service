@@ -29,5 +29,7 @@ export class CreateDictionaryRequest {
     required: false,
     default: null,
   })
+  @IsString()
+  @IsOptional()
   source: string = null;
 }

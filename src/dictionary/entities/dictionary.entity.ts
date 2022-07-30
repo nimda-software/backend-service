@@ -40,7 +40,7 @@ export class Dictionary implements TimestampsInterface {
   status: STATUS;
 
   // Bidirectional relationship with TranslationEntity by specifying inverse side
-  @OneToOne(() => Translation, (translation) => translation.dictionary)
+  @OneToOne(() => Translation, (translation) => translation.dictionary, { onDelete: 'CASCADE', nullable: true })
   translation: Translation;
 
   @ApiProperty({ example: '2020-01-01T00:00:00.000Z' })

@@ -1,12 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DictionaryController } from './dictionary.controller';
 import { DictionaryService } from './dictionary.service';
+import { SetupModule } from '../common/setup/setup.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Dictionary } from './entities/dictionary.entity';
 
 describe('DictionaryController', () => {
   let controller: DictionaryController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [SetupModule, TypeOrmModule.forFeature([Dictionary])],
       controllers: [DictionaryController],
       providers: [DictionaryService],
     }).compile();

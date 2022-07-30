@@ -1,15 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { CreateDictionaryRequest } from './request/create-dictionary.request';
 import { UpdateDictionaryRequest } from './request/update-dictionary.request';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Dictionary } from './entities/dictionary.entity';
+import { Repository } from 'typeorm-v2';
 
 @Injectable()
 export class DictionaryService {
+  constructor(@InjectRepository(Dictionary) private readonly dictionary: Repository<Dictionary>) {}
+
   create(createDictionaryDto: CreateDictionaryRequest) {
-    return 'This action adds a new dictionary';
+    return this.dictionary.save({ ...createDictionaryDto, createdBy: -1 });
   }
 
   findAll() {
-    return `This action returns all dictionary`;
+    return this.dictionary.find();
   }
 
   findOne(id: number) {

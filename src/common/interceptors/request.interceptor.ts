@@ -1,15 +1,9 @@
-import {
-  CallHandler,
-  ExecutionContext,
-  Injectable,
-  NestInterceptor,
-} from '@nestjs/common';
-import { RequestService } from '../setup/request/request.service';
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
+import { RequestService } from '../setup/request';
 import { Observable } from 'rxjs';
-import { LoggerService } from '../setup/logger/logger.service';
+import { LoggerService, LoggerUtils } from '../setup/logger';
 import { Env } from '../env';
-import * as chalk from 'chalk';
-import { LoggerUtils } from '../setup/logger/logger.utils';
+import chalk from 'chalk';
 
 @Injectable()
 export class RequestInterceptor implements NestInterceptor {
@@ -26,9 +20,7 @@ export class RequestInterceptor implements NestInterceptor {
     const started = Date.now();
 
     const whiteListedPaths = ['health', 'metrics', 'docs', 'swagger-ui'];
-    const isWhiteListed = whiteListedPaths.some((path) =>
-      request.url.includes(path),
-    );
+    const isWhiteListed = whiteListedPaths.some((path) => request.url.includes(path));
 
     const text = {
       started: 'Started',
@@ -47,8 +39,7 @@ export class RequestInterceptor implements NestInterceptor {
         chalk.gray.underline,
       ];
 
-      const randomColor =
-        randomColors[Math.floor(Math.random() * randomColors.length)];
+      const randomColor = randomColors[Math.floor(Math.random() * randomColors.length)];
       text.started = randomColor(text.started);
       text.completed = randomColor(text.completed);
       text.payload = randomColor(text.payload);
@@ -65,16 +56,8 @@ export class RequestInterceptor implements NestInterceptor {
       isWhiteListed || logger.log(logText, reqId);
     });
 
-    isWhiteListed ||
-      logger.log(
-        `${text.started} ${method} ${originalUrl} - ${userAgent} ${ip}`,
-        reqId,
-      );
-    isWhiteListed ||
-      logger.log(
-        `${text.payload} ${LoggerUtils.stringify(request.body)}`,
-        reqId,
-      );
+    isWhiteListed || logger.log(`${text.started} ${method} ${originalUrl} - ${userAgent} ${ip}`, reqId);
+    isWhiteListed || logger.log(`${text.payload} ${LoggerUtils.stringify(request.body)}`, reqId);
 
     return next.handle();
   }
