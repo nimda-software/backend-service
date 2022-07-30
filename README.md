@@ -11,7 +11,7 @@
   <a href='https://github.com/megrulad-ge/backend-service/blob/master/docs/swagger.yaml'>
     <img src='https://img.shields.io/badge/Swagger-yaml-green.svg' alt='Swagger-yaml' />
   </a>
-  <a href='megrulad-ge.github.io/backend-service'>
+  <a href='https://megrulad-ge.github.io/backend-service'>
     <img src='https://img.shields.io/badge/Compo-docs-green.svg' alt='Compo-docs' />
   </a>
 </p>
