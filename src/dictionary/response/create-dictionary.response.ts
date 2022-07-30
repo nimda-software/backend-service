@@ -2,7 +2,7 @@ import { Translation } from '../../translations/entities/translation.entity';
 import { Dictionary } from '../entities/dictionary.entity';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
-import { STATUS } from 'src/common/enums/status.enum';
+import { STATUS } from '../../common/enums/status.enum';
 import { Language } from '../../translations/translation.enum';
 
 export class CreateDictionaryResponse extends PartialType(Dictionary) {
