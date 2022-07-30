@@ -1,12 +1,14 @@
-import { Entity, Generated, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Column } from '../../common/decorators';
-import { TimestampsEntity } from '../../common/entities/timestamps.entity';
-import { Language } from '../../translate/translate.enum';
+import { Entity, Generated, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
+import { Column, CreateDateColumn, UpdateDateColumn } from '../../common/decorators';
+import { Language } from '../../translations/translate.enum';
 import { ApiProperty } from '@nestjs/swagger';
-import { Translate } from '../../translate/entities/translate.entity';
+import { Translation } from '../../translations/entities/translate.entity';
+import { TimestampsInterface } from '../../common/interfaces/timestamps.interface';
+import { STATUS } from '../../common/enums/status.enum';
+import { DictionaryProperties } from '../interfaces/dictionary-properties.interface';
 
 @Entity({ name: 'dictionary' })
-export class Dictionary extends TimestampsEntity {
+export class Dictionary implements TimestampsInterface {
   @ApiProperty({ example: 1, description: 'Primary key' })
   @PrimaryGeneratedColumn()
   id: number;
@@ -28,6 +30,24 @@ export class Dictionary extends TimestampsEntity {
   @Column({ type: 'enum', enum: Language, nullable: false })
   language: Language;
 
-  @OneToMany(() => Translate, (translate) => translate.dictionary)
-  translations: Translate[];
+  @Column({ type: 'jsonb', nullable: true })
+  properties: DictionaryProperties;
+
+  @Column({ type: 'int', nullable: false })
+  createdBy: number;
+
+  @Column({ type: 'enum', enum: STATUS, default: STATUS.PENDING })
+  status: STATUS;
+
+  // Bidirectional relationship with TranslationEntity by specifying inverse side
+  @OneToOne(() => Translation, (translation) => translation.dictionary)
+  translation: Translation;
+
+  @ApiProperty({ example: '2020-01-01T00:00:00.000Z' })
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
+
+  @ApiProperty({ example: '2022-04-25T08:34:33.315Z' })
+  @UpdateDateColumn({ type: 'timestamp' })
+  updatedAt: Date;
 }
