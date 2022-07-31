@@ -120,7 +120,7 @@ export class DictionaryController {
     // TODO: when user data is available change the deletedBy to the user's id
     const deletedBy = -1;
 
-    const deleted = await this.dictionaryService.delete(param.uuid);
+    const deleted = await this.dictionaryService.markAsDeleted(param.uuid);
     if (deleted.affected === 0) throw new NotFoundException('No record found with the given uuid');
 
     Logger.log(`The record has been removed. Affected rows: ${deleted.affected}`);

@@ -129,8 +129,13 @@
       "**/*.(t|j)s"
     ],
     "coveragePathIgnorePatterns": [
-      "main.ts",
       "index.ts",
+      "main.ts",
+      "cli.ts",
+      "src/__common/bootstrap/.*",
+      "src/__common/setup/seeder/.*",
+      "migration.config.ts",
+      "uml-diagram.config.ts",
       ".*\\.d\\.ts$",
       ".*\\.interceptor\\.ts$",
       ".*\\.module\\.ts$",
