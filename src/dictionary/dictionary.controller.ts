@@ -1,8 +1,27 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpCode, Logger } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpStatus,
+  HttpCode,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { DictionaryService } from './dictionary.service';
 import { CreateDictionaryRequest } from './request/create-dictionary.request';
 import { UpdateDictionaryRequestBody, UpdateDictionaryRequestParam } from './request/update-dictionary.request';
-import { ApiAcceptedResponse, ApiCreatedResponse, ApiNoContentResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiAcceptedResponse,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Dictionary } from './dictionary.entity';
 import { STATUS } from '../__common/enums/status.enum';
 import { DeleteDictionaryRequestParam } from './request/remove-dictionary.request';
@@ -65,6 +84,7 @@ export class DictionaryController {
   @ApiBadRequestResponse()
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiNoContentResponse({ description: 'Returns NO_CONTENT when successful' })
+  @ApiNotFoundResponse({ description: 'Returns NOT FOUND when no record found' })
   async update(
     @Param() param: UpdateDictionaryRequestParam,
     @Body() requestBody: UpdateDictionaryRequestBody,
@@ -73,6 +93,8 @@ export class DictionaryController {
     const updatedBy = -1;
 
     const oldValue = await this.dictionaryService.findOneBy(param.uuid);
+    if (!oldValue) throw new NotFoundException('No record found with the given uuid');
+
     const updated = await this.dictionaryService.update(param.uuid, requestBody);
     Logger.log(`The record has been updated. Affected rows: ${updated}`);
 
@@ -90,11 +112,14 @@ export class DictionaryController {
   @ApiBadRequestResponse()
   @HttpCode(HttpStatus.ACCEPTED)
   @ApiAcceptedResponse({ description: 'Returns ACCEPTED when successful' })
+  @ApiNotFoundResponse({ description: 'Returns NOT FOUND when no record found' })
   async delete(@Param() param: DeleteDictionaryRequestParam): Promise<void> {
     // TODO: when user data is available change the deletedBy to the user's id
     const deletedBy = -1;
 
     const deleted = await this.dictionaryService.delete(param.uuid);
+    if (deleted.affected === 0) throw new NotFoundException('No record found with the given uuid');
+
     Logger.log(`The record has been removed. Affected rows: ${deleted.affected}`);
 
     await this.activityService.addDictionaryDeleted({ deletedBy, dictionaryUUID: param.uuid });

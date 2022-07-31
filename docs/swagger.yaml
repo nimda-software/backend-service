@@ -282,6 +282,8 @@ paths:
                 example:
                   statusCode: 403
                   message: Forbidden
+        '404':
+          description: Returns NOT FOUND when no record found
       tags: *ref_1
       security:
         - bearer: []
@@ -333,6 +335,8 @@ paths:
                 example:
                   statusCode: 403
                   message: Forbidden
+        '404':
+          description: Returns NOT FOUND when no record found
       tags: *ref_1
       security:
         - bearer: []
