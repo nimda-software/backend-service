@@ -44,7 +44,10 @@ export class DictionaryController {
   @HttpCode(HttpStatus.OK)
   @ApiResponse({ status: HttpStatus.OK, description: 'Returns OK when successful', type: FetchDictionaryResponse })
   async findOneByUUID(@Param() param: FetchDictionaryRequestParam): Promise<FetchDictionaryResponse> {
-    return this.dictionaryService.findOneBy(param.uuid);
+    const record = await this.dictionaryService.findOneBy(param.uuid);
+    if (!record) throw new NotFoundException('No record found with the given uuid');
+
+    return record;
   }
 
   @Get('find/many/by/:keyword/:language')

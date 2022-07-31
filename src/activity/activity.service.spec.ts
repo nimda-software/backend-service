@@ -4,9 +4,11 @@ import { SetupModule } from '../__common/setup/setup.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Activity } from './activity.entity';
 import { ActivityAction, ActivityType } from './activity.enum';
+import { DataSource } from 'typeorm';
 
 describe('ActivityLogsService', () => {
   let service: ActivityService;
+  let connection: DataSource;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -15,7 +17,10 @@ describe('ActivityLogsService', () => {
     }).compile();
 
     service = module.get<ActivityService>(ActivityService);
+    connection = module.get<DataSource>(DataSource);
   });
+
+  afterEach(() => connection.destroy());
 
   it('should be defined', () => {
     expect(service).toBeDefined();
