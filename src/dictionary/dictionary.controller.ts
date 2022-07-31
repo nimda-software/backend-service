@@ -22,14 +22,15 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Dictionary } from './dictionary.entity';
-import { STATUS } from '../__common/enums/status.enum';
 import { DeleteDictionaryRequestParam } from './request/remove-dictionary.request';
 import { CreateDictionaryResponse } from './response/create-dictionary.response';
 import { ApiBadRequestResponse, ApiProtected } from '../__common/decorators';
 import { FetchDictionaryRequestParam, SearchDictionaryRequestParam } from './request/fetch-dictionary.request';
 import { FetchDictionaryResponse } from './response/fetch-dictionary.response';
 import { ActivityService } from '../activity/activity.service';
+import { STATUS } from '../__common/enums/status.enum';
+import { Dictionary } from './dictionary.entity';
+import { Env } from '../__common/env';
 
 @ApiTags('Dictionary')
 @Controller('dictionary')
@@ -47,7 +48,7 @@ export class DictionaryController {
     const record = await this.dictionaryService.findOneBy(param.uuid);
     if (!record) throw new NotFoundException('No record found with the given uuid');
 
-    return record;
+    return FetchDictionaryResponse.from(record);
   }
 
   @Get('find/many/by/:keyword/:language')
@@ -60,7 +61,9 @@ export class DictionaryController {
     isArray: true,
   })
   async searchByKeyword(@Param() param: SearchDictionaryRequestParam): Promise<FetchDictionaryResponse[]> {
-    return this.dictionaryService.searchByKeyword(param.keyword, param.language);
+    const records = await this.dictionaryService.searchByKeyword(param.keyword, param.language);
+
+    return FetchDictionaryResponse.from(records);
   }
 
   @Post('create/one')
@@ -73,13 +76,13 @@ export class DictionaryController {
     const createdBy = -1;
     const payload: Partial<Dictionary> = {
       ...requestBody,
-      status: STATUS.PENDING,
+      ...(Env.isDev && { status: STATUS.ACTIVE }), // otherwise it will be set to PENDING by default
     };
 
     const dictionary = await this.dictionaryService.create(payload);
     await this.activityService.addDictionaryCreated({ createdBy, dictionaryUUID: dictionary.uuid });
 
-    return new CreateDictionaryResponse(dictionary);
+    return CreateDictionaryResponse.from(dictionary);
   }
 
   @ApiProtected()

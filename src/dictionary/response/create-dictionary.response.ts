@@ -40,4 +40,8 @@ export class CreateDictionaryResponse extends PartialType(Dictionary) {
     super();
     Object.assign(this, partial);
   }
+
+  static from(partial: Partial<Dictionary>) {
+    return new CreateDictionaryResponse(partial);
+  }
 }

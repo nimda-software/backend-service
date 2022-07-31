@@ -31,5 +31,5 @@ export class CreateDictionaryRequest {
   })
   @IsString()
   @IsOptional()
-  source: string = null;
+  source: string;
 }
