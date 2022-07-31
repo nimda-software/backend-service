@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { DictionaryService } from './dictionary.service';
 import { CreateDictionaryRequest } from './request/create-dictionary.request';
-import { UpdateDictionaryRequestBody, UpdateDictionaryRequestParam } from './request/update-dictionary.request';
+import { UpdateDictionaryRequest, UpdateDictionaryRequestParam } from './request/update-dictionary.request';
 import {
   ApiAcceptedResponse,
   ApiCreatedResponse,
@@ -90,7 +90,7 @@ export class DictionaryController {
   @ApiNotFoundResponse({ description: 'Returns NOT FOUND when no record found' })
   async update(
     @Param() param: UpdateDictionaryRequestParam,
-    @Body() requestBody: UpdateDictionaryRequestBody,
+    @Body() requestBody: UpdateDictionaryRequest,
   ): Promise<void> {
     // TODO: when user data is available change the updatedBy to the user's id
     const updatedBy = -1;

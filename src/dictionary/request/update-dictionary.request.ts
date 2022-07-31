@@ -3,7 +3,7 @@ import { CreateDictionaryRequest } from './create-dictionary.request';
 import { STATUS } from '../../__common/enums/status.enum';
 import { IsEnum, IsUUID } from 'class-validator';
 
-export class UpdateDictionaryRequestBody extends PartialType(CreateDictionaryRequest) {
+export class UpdateDictionaryRequest extends PartialType(CreateDictionaryRequest) {
   @ApiProperty({ description: 'Translation status', enum: STATUS, required: false })
   @IsEnum(STATUS)
   status: STATUS;
