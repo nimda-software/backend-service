@@ -84,7 +84,96 @@ paths:
         '200':
           description: ''
       tags: *ref_0
-  /api/v1/dictionary:
+  '/api/v1/dictionary/find/one/by/{uuid}':
+    get:
+      operationId: DictionaryController_findOneByUUID
+      parameters:
+        - name: uuid
+          required: true
+          in: path
+          description: Dictionary id
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns OK when successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FetchDictionaryResponse'
+        '400':
+          description: Returns BAD_REQUEST when the payload is invalid or malformed.
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  statusCode: 400
+                  message:
+                    - name should not be empty
+                    - name should be string
+                  error: Bad Request
+                properties:
+                  message:
+                    type: array
+                  statusCode:
+                    type: number
+                  error:
+                    type: string
+      tags: &ref_1
+        - Dictionary
+  '/api/v1/dictionary/find/many/by/{keyword}/{language}':
+    get:
+      operationId: DictionaryController_searchByKeyword
+      parameters:
+        - name: keyword
+          required: true
+          in: path
+          description: Search by keyword
+          schema:
+            type: string
+        - name: language
+          required: true
+          in: path
+          description: Search by language
+          schema:
+            enum:
+              - en
+              - ru
+              - ka
+              - me
+              - sv
+            type: string
+      responses:
+        '200':
+          description: Returns OK when successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FetchDictionaryResponse'
+        '400':
+          description: Returns BAD_REQUEST when the payload is invalid or malformed.
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  statusCode: 400
+                  message:
+                    - name should not be empty
+                    - name should be string
+                  error: Bad Request
+                properties:
+                  message:
+                    type: array
+                  statusCode:
+                    type: number
+                  error:
+                    type: string
+      tags: *ref_1
+  /api/v1/dictionary/create/one:
     post:
       operationId: DictionaryController_create
       parameters: []
@@ -136,79 +225,10 @@ paths:
                 example:
                   statusCode: 403
                   message: Forbidden
-      tags: &ref_1
-        - Dictionary
+      tags: *ref_1
       security:
         - bearer: []
-    get:
-      operationId: DictionaryController_findAll
-      parameters: []
-      responses:
-        '200':
-          description: Returns OK when successful
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/FetchDictionaryResponse'
-        '400':
-          description: Returns BAD_REQUEST when the payload is invalid or malformed.
-          content:
-            application/json:
-              schema:
-                type: object
-                example:
-                  statusCode: 400
-                  message:
-                    - name should not be empty
-                    - name should be string
-                  error: Bad Request
-                properties:
-                  message:
-                    type: array
-                  statusCode:
-                    type: number
-                  error:
-                    type: string
-      tags: *ref_1
-  '/api/v1/dictionary/{uuid}':
-    get:
-      operationId: DictionaryController_findOne
-      parameters:
-        - name: uuid
-          required: true
-          in: path
-          description: Dictionary id
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Returns OK when successful
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FetchDictionaryResponse'
-        '400':
-          description: Returns BAD_REQUEST when the payload is invalid or malformed.
-          content:
-            application/json:
-              schema:
-                type: object
-                example:
-                  statusCode: 400
-                  message:
-                    - name should not be empty
-                    - name should be string
-                  error: Bad Request
-                properties:
-                  message:
-                    type: array
-                  statusCode:
-                    type: number
-                  error:
-                    type: string
-      tags: *ref_1
+  '/api/v1/dictionary/update/one/by/{uuid}':
     patch:
       operationId: DictionaryController_update
       parameters:
@@ -265,8 +285,9 @@ paths:
       tags: *ref_1
       security:
         - bearer: []
+  '/api/v1/dictionary/delete/one/by/{uuid}':
     delete:
-      operationId: DictionaryController_remove
+      operationId: DictionaryController_delete
       parameters:
         - name: uuid
           required: true
@@ -338,6 +359,30 @@ components:
     UpdateTranslationRequest:
       type: object
       properties: {}
+    FetchDictionaryResponse:
+      type: object
+      properties:
+        uuid:
+          type: string
+          description: UUID string
+          example: 12345678-1234-1234-1234-123456789012
+        value:
+          type: string
+          example: Hello there
+          description: Word or sentence
+        description:
+          type: string
+          example: Some explanation
+          description: 'Dictionary word/sentence description, with examples'
+        language:
+          type: string
+          example: en
+          description: Language code
+      required:
+        - uuid
+        - value
+        - description
+        - language
     CreateDictionaryRequest:
       type: object
       properties:
@@ -369,30 +414,6 @@ components:
         - value
         - language
     CreateDictionaryResponse:
-      type: object
-      properties:
-        uuid:
-          type: string
-          description: UUID string
-          example: 12345678-1234-1234-1234-123456789012
-        value:
-          type: string
-          example: Hello there
-          description: Word or sentence
-        description:
-          type: string
-          example: Some explanation
-          description: 'Dictionary word/sentence description, with examples'
-        language:
-          type: string
-          example: en
-          description: Language code
-      required:
-        - uuid
-        - value
-        - description
-        - language
-    FetchDictionaryResponse:
       type: object
       properties:
         uuid:

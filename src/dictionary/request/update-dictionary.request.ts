@@ -1,6 +1,6 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { CreateDictionaryRequest } from './create-dictionary.request';
-import { STATUS } from '../../common/enums/status.enum';
+import { STATUS } from '../../__common/enums/status.enum';
 import { IsEnum, IsUUID } from 'class-validator';
 
 export class UpdateDictionaryRequestBody extends PartialType(CreateDictionaryRequest) {

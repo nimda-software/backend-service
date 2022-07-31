@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DictionaryService } from './dictionary.service';
-import { SetupModule } from '../common/setup/setup.module';
-import { Dictionary } from './entities/dictionary.entity';
+import { SetupModule } from '../__common/setup/setup.module';
+import { Dictionary } from './dictionary.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 describe('DictionaryService', () => {

@@ -1,10 +1,9 @@
 import { Entity, Generated, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
-import { Column, CreateDateColumn, UpdateDateColumn } from '../../common/decorators';
-import { Language } from '../../translations/translation.enum';
-import { Translation } from '../../translations/entities/translation.entity';
-import { TimestampsInterface } from '../../common/interfaces/timestamps.interface';
-import { STATUS } from '../../common/enums/status.enum';
-import { DictionaryProperties } from '../interfaces/dictionary-properties.interface';
+import { Column, CreateDateColumn, UpdateDateColumn } from '../__common/decorators';
+import { Language } from '../translations/translation.enum';
+import { Translation } from '../translations/entities/translation.entity';
+import { TimestampsInterface } from '../__common/interfaces/timestamps.interface';
+import { STATUS } from '../__common/enums/status.enum';
 
 @Entity({ name: 'dictionary' })
 export class Dictionary implements TimestampsInterface {
@@ -12,23 +11,20 @@ export class Dictionary implements TimestampsInterface {
   id: number;
 
   @Generated('uuid')
-  @Column({ type: 'uuid', nullable: false })
+  @Column({ type: 'uuid' })
   uuid: string;
 
-  @Column({ type: 'text', nullable: false })
+  @Column({ type: 'varchar', length: 512 })
   value: string;
 
   @Column({ type: 'text', nullable: true })
   description: string;
 
-  @Column({ type: 'enum', enum: Language, nullable: false })
+  @Column({ type: 'enum', enum: Language })
   language: Language;
 
-  @Column({ type: 'jsonb', nullable: true })
-  properties: DictionaryProperties;
-
-  @Column({ type: 'int', nullable: false })
-  createdBy: number;
+  @Column({ type: 'varchar', nullable: true, length: 32 })
+  source: string;
 
   @Column({ type: 'enum', enum: STATUS, default: STATUS.PENDING })
   status: STATUS;

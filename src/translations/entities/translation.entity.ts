@@ -1,11 +1,11 @@
 import { Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, CreateDateColumn, UpdateDateColumn } from '../../common/decorators';
+import { Column, CreateDateColumn, UpdateDateColumn } from '../../__common/decorators';
 import { Language } from '../translation.enum';
-import { Dictionary } from '../../dictionary/entities/dictionary.entity';
-import { TimestampsInterface } from '../../common/interfaces/timestamps.interface';
+import { Dictionary } from '../../dictionary/dictionary.entity';
+import { TimestampsInterface } from '../../__common/interfaces/timestamps.interface';
 import { TranslationProperties } from '../interfaces/translation-properties.interface';
-import { STATUS } from '../../common/enums/status.enum';
+import { STATUS } from '../../__common/enums/status.enum';
 
 @Entity({ name: 'translations' })
 export class Translation implements TimestampsInterface {

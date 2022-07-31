@@ -1,8 +1,8 @@
 import { Translation } from '../../translations/entities/translation.entity';
-import { Dictionary } from '../entities/dictionary.entity';
+import { Dictionary } from '../dictionary.entity';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
-import { STATUS } from '../../common/enums/status.enum';
+import { STATUS } from '../../__common/enums/status.enum';
 import { Language } from '../../translations/translation.enum';
 
 export class CreateDictionaryResponse extends PartialType(Dictionary) {
@@ -22,7 +22,7 @@ export class CreateDictionaryResponse extends PartialType(Dictionary) {
   id: number;
 
   @Exclude()
-  createdBy: number;
+  source: string;
 
   @Exclude()
   status: STATUS;

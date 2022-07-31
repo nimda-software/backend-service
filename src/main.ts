@@ -3,8 +3,8 @@
 import cli from './cli';
 cli.run();
 
-import { LoggerUtils } from './common/setup/logger';
-import { bootstrap } from './common/bootstrap';
+import { LoggerUtils } from './__common/setup/logger';
+import { bootstrap } from './__common/bootstrap';
 import { Logger } from '@nestjs/common';
 import cluster from 'cluster';
 import R from 'ramda';
