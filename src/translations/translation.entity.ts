@@ -1,12 +1,12 @@
-import { Entity, Generated, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Entity, Generated, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Column, CreateDateColumn, UpdateDateColumn } from '../__common/decorators';
-import { Language } from '../translations/translation.enum';
-import { Translation } from '../translations/translation.entity';
+import { Language } from './translation.enum';
+import { Dictionary } from '../dictionary/dictionary.entity';
 import { TimestampsInterface } from '../__common/interfaces/timestamps.interface';
 import { STATUS } from '../__common/enums/status.enum';
 
-@Entity({ name: 'dictionary' })
-export class Dictionary implements TimestampsInterface {
+@Entity({ name: 'translations' })
+export class Translation implements TimestampsInterface {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -29,10 +29,10 @@ export class Dictionary implements TimestampsInterface {
   @Column({ type: 'enum', enum: STATUS, default: STATUS.PENDING })
   status: STATUS;
 
-  // Bidirectional relationship with TranslationEntity by specifying inverse side
-  @OneToMany(() => Translation, (translation) => translation.dictionary, { nullable: true })
-  @JoinColumn({ name: 'translationId' })
-  translations: Translation[];
+  // Bidirectional relationship with DictionaryEntity by specifying inverse side
+  @ManyToOne(() => Dictionary, (dictionary) => dictionary.translations, { nullable: false })
+  @JoinColumn({ name: 'dictionaryId' })
+  dictionary: Dictionary;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;

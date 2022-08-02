@@ -9,5 +9,6 @@ import { ActivityModule } from '../activity/activity.module';
   imports: [ActivityModule, TypeOrmModule.forFeature([Dictionary])],
   controllers: [DictionaryController],
   providers: [DictionaryService],
+  exports: [DictionaryService],
 })
 export class DictionaryModule {}

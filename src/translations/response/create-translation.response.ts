@@ -1,11 +1,11 @@
-import { Translation } from '../../translations/translation.entity';
-import { Dictionary } from '../dictionary.entity';
+import { Translation } from '../translation.entity';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { STATUS } from '../../__common/enums/status.enum';
-import { Language } from '../../translations/translation.enum';
+import { Language } from '../translation.enum';
+import { Dictionary } from '../../dictionary/dictionary.entity';
 
-export class CreateDictionaryResponse extends PartialType(Dictionary) {
+export class CreateTranslationResponse extends PartialType(Translation) {
   @ApiProperty({ description: 'UUID string', example: '12345678-1234-1234-1234-123456789012' })
   uuid: string;
 
@@ -28,7 +28,7 @@ export class CreateDictionaryResponse extends PartialType(Dictionary) {
   status: STATUS;
 
   @Exclude()
-  translation: Translation;
+  dictionary: Dictionary;
 
   @Exclude()
   createdAt: Date;
@@ -36,12 +36,12 @@ export class CreateDictionaryResponse extends PartialType(Dictionary) {
   @Exclude()
   updatedAt: Date;
 
-  constructor(partial: Partial<Dictionary>) {
+  constructor(partial: Partial<Translation>) {
     super();
     Object.assign(this, partial);
   }
 
-  static from(partial: Partial<Dictionary>) {
-    return new CreateDictionaryResponse(partial);
+  static from(partial: Partial<Translation>) {
+    return new CreateTranslationResponse(partial);
   }
 }

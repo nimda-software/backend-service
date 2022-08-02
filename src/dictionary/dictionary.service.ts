@@ -13,11 +13,14 @@ export class DictionaryService {
     return this.dictionary.findOne({
       where: { uuid, status: STATUS.ACTIVE },
       select: ['uuid', 'value', 'description', 'language'],
+      relations: { translations: true },
+      order: { createdAt: 'DESC' },
     });
   }
 
   searchByKeyword(keyword: string, language: Language) {
     return this.dictionary.find({
+      relations: { translations: true },
       select: ['uuid', 'value', 'description', 'language'],
       where: {
         // ILike does case-insensitive search

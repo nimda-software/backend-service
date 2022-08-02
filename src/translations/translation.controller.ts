@@ -1,36 +1,122 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpCode,
+  HttpStatus,
+  NotFoundException,
+  Logger,
+} from '@nestjs/common';
 import { TranslationService } from './translation.service';
 import { CreateTranslationRequest } from './request/create-translation.request';
-import { UpdateTranslationRequest } from './request/update-translation.request';
-import { ApiTags } from '@nestjs/swagger';
+import { UpdateTranslationRequest, UpdateTranslationRequestParam } from './request/update-translation.request';
+import {
+  ApiAcceptedResponse,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiProtected } from '../__common/decorators';
+import { FetchTranslationResponse } from './response/fetch-translation.response';
+import { CreateDictionaryResponse } from '../dictionary/response/create-dictionary.response';
+import { Env } from '../__common/env';
+import { STATUS } from '../__common/enums/status.enum';
+import { Translation } from './translation.entity';
+import { ActivityService } from '../activity/activity.service';
+import { DeleteTranslationRequestParam } from './request/remove-translation.request';
+import { FetchDictionaryRequestParam } from '../dictionary/request/fetch-dictionary.request';
+import { DictionaryService } from '../dictionary/dictionary.service';
 
 @ApiTags('Translation')
 @Controller('translation')
 export class TranslationController {
-  constructor(private readonly translateService: TranslationService) {}
+  constructor(
+    private readonly translateService: TranslationService,
+    private readonly dictionaryService: DictionaryService,
+    private readonly activityService: ActivityService,
+  ) {}
 
-  @Post()
-  create(@Body() createTranslateDto: CreateTranslationRequest) {
-    return this.translateService.create(createTranslateDto);
+  @ApiBadRequestResponse()
+  @HttpCode(HttpStatus.OK)
+  @Get('find/one/by/:uuid')
+  @ApiResponse({ status: HttpStatus.OK, description: 'Returns OK when successful', type: FetchTranslationResponse })
+  async findOneByUUID(@Param() param: FetchDictionaryRequestParam): Promise<FetchTranslationResponse> {
+    const record = await this.translateService.findOneBy(param.uuid);
+    if (!record) throw new NotFoundException('No record found with the given uuid');
+
+    return FetchTranslationResponse.from(record);
   }
 
-  @Get()
-  findAll() {
-    return this.translateService.findAll();
+  @ApiProtected()
+  @ApiBadRequestResponse()
+  @Post('create/one')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiCreatedResponse({ type: CreateDictionaryResponse, description: 'Returns CREATED when successful' })
+  async create(@Body() requestBody: CreateTranslationRequest): Promise<FetchTranslationResponse> {
+    // TODO: when user data is available change the createdBy to the user's id
+    const createdBy = -1;
+    const payload: Partial<Translation> = {
+      ...requestBody,
+      ...(Env.isDev && { status: STATUS.ACTIVE }), // otherwise it will be set to PENDING by default
+    };
+
+    const dictionary = await this.dictionaryService.findOneBy(requestBody.dictionaryUUID);
+    if (!dictionary) throw new NotFoundException('No Dictionary record found with the given uuid');
+
+    const translation = await this.translateService.create({ ...payload, dictionary });
+    await this.activityService.addTranslationCreated({ createdBy, dictionaryUUID: translation.uuid });
+
+    return FetchTranslationResponse.from(translation);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.translateService.findOne(+id);
+  @ApiProtected()
+  @ApiBadRequestResponse()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Patch('update/one/by/:uuid')
+  @ApiNoContentResponse({ description: 'Returns NO_CONTENT when successful' })
+  @ApiNotFoundResponse({ description: 'Returns NOT FOUND when no record found' })
+  async update(@Param() param: UpdateTranslationRequestParam, @Body() requestBody: UpdateTranslationRequest) {
+    // TODO: when user data is available change the updatedBy to the user's id
+    const updatedBy = -1;
+
+    const oldValue = await this.translateService.findOneBy(param.uuid);
+    if (!oldValue) throw new NotFoundException('No record found with the given uuid');
+
+    const updated = await this.translateService.update(param.uuid, requestBody);
+    Logger.log(`The record has been updated. Affected rows: ${updated}`);
+
+    await this.activityService.addDictionaryUpdated({
+      updatedBy,
+      oldValue,
+      dictionaryUUID: param.uuid,
+    });
+
+    return void 0;
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTranslateDto: UpdateTranslationRequest) {
-    return this.translateService.update(+id, updateTranslateDto);
-  }
+  @ApiProtected()
+  @ApiBadRequestResponse()
+  @HttpCode(HttpStatus.ACCEPTED)
+  @Delete('delete/one/by/:uuid')
+  @ApiAcceptedResponse({ description: 'Returns ACCEPTED when successful' })
+  @ApiNotFoundResponse({ description: 'Returns NOT FOUND when no record found' })
+  async delete(@Param() param: DeleteTranslationRequestParam): Promise<void> {
+    // TODO: when user data is available change the deletedBy to the user's id
+    const deletedBy = -1;
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.translateService.remove(+id);
+    const deleted = await this.translateService.markAsDeleted(param.uuid);
+    if (deleted.affected === 0) throw new NotFoundException('No record found with the given uuid');
+
+    Logger.log(`The record has been removed. Affected rows: ${deleted.affected}`);
+
+    await this.activityService.addDictionaryDeleted({ deletedBy, dictionaryUUID: param.uuid });
+
+    return void 0;
   }
 }

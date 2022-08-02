@@ -19,7 +19,45 @@ paths:
                     example: alive
       tags:
         - Health
-  /api/v1/translation:
+  '/api/v1/translation/find/one/by/{uuid}':
+    get:
+      operationId: TranslationController_findOneByUUID
+      parameters:
+        - name: uuid
+          required: true
+          in: path
+          description: Dictionary id
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns OK when successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FetchTranslationResponse'
+        '400':
+          description: Returns BAD_REQUEST when the payload is invalid or malformed.
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  statusCode: 400
+                  message:
+                    - name should not be empty
+                    - name should be string
+                  error: Bad Request
+                properties:
+                  message:
+                    type: array
+                  statusCode:
+                    type: number
+                  error:
+                    type: string
+      tags: &ref_0
+        - Translation
+  /api/v1/translation/create/one:
     post:
       operationId: TranslationController_create
       parameters: []
@@ -31,35 +69,57 @@ paths:
               $ref: '#/components/schemas/CreateTranslationRequest'
       responses:
         '201':
-          description: ''
-      tags: &ref_0
-        - Translation
-    get:
-      operationId: TranslationController_findAll
-      parameters: []
-      responses:
-        '200':
-          description: ''
+          description: Returns CREATED when successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateDictionaryResponse'
+        '400':
+          description: Returns BAD_REQUEST when the payload is invalid or malformed.
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  statusCode: 400
+                  message:
+                    - name should not be empty
+                    - name should be string
+                  error: Bad Request
+                properties:
+                  message:
+                    type: array
+                  statusCode:
+                    type: number
+                  error:
+                    type: string
+        '401':
+          description: 'Returns UNAUTHORIZED when JWT is not provided, invalid or expired.'
+          content:
+            application/json:
+              schema:
+                example:
+                  statusCode: 401
+                  message: Unauthorized
+        '403':
+          description: Returns FORBIDDEN when JWT is valid but user is not authorized.
+          content:
+            application/json:
+              schema:
+                example:
+                  statusCode: 403
+                  message: Forbidden
       tags: *ref_0
-  '/api/v1/translation/{id}':
-    get:
-      operationId: TranslationController_findOne
-      parameters:
-        - name: id
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-      tags: *ref_0
+      security:
+        - bearer: []
+  '/api/v1/translation/update/one/by/{uuid}':
     patch:
       operationId: TranslationController_update
       parameters:
-        - name: id
+        - name: uuid
           required: true
           in: path
+          description: Dictionary UUID
           schema:
             type: string
       requestBody:
@@ -69,21 +129,101 @@ paths:
             schema:
               $ref: '#/components/schemas/UpdateTranslationRequest'
       responses:
-        '200':
-          description: ''
+        '204':
+          description: Returns NO_CONTENT when successful
+        '400':
+          description: Returns BAD_REQUEST when the payload is invalid or malformed.
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  statusCode: 400
+                  message:
+                    - name should not be empty
+                    - name should be string
+                  error: Bad Request
+                properties:
+                  message:
+                    type: array
+                  statusCode:
+                    type: number
+                  error:
+                    type: string
+        '401':
+          description: 'Returns UNAUTHORIZED when JWT is not provided, invalid or expired.'
+          content:
+            application/json:
+              schema:
+                example:
+                  statusCode: 401
+                  message: Unauthorized
+        '403':
+          description: Returns FORBIDDEN when JWT is valid but user is not authorized.
+          content:
+            application/json:
+              schema:
+                example:
+                  statusCode: 403
+                  message: Forbidden
+        '404':
+          description: Returns NOT FOUND when no record found
       tags: *ref_0
+      security:
+        - bearer: []
+  '/api/v1/translation/delete/one/by/{uuid}':
     delete:
-      operationId: TranslationController_remove
+      operationId: TranslationController_delete
       parameters:
-        - name: id
+        - name: uuid
           required: true
           in: path
+          description: Dictionary UUID
           schema:
             type: string
       responses:
-        '200':
-          description: ''
+        '202':
+          description: Returns ACCEPTED when successful
+        '400':
+          description: Returns BAD_REQUEST when the payload is invalid or malformed.
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  statusCode: 400
+                  message:
+                    - name should not be empty
+                    - name should be string
+                  error: Bad Request
+                properties:
+                  message:
+                    type: array
+                  statusCode:
+                    type: number
+                  error:
+                    type: string
+        '401':
+          description: 'Returns UNAUTHORIZED when JWT is not provided, invalid or expired.'
+          content:
+            application/json:
+              schema:
+                example:
+                  statusCode: 401
+                  message: Unauthorized
+        '403':
+          description: Returns FORBIDDEN when JWT is valid but user is not authorized.
+          content:
+            application/json:
+              schema:
+                example:
+                  statusCode: 403
+                  message: Forbidden
+        '404':
+          description: Returns NOT FOUND when no record found
       tags: *ref_0
+      security:
+        - bearer: []
   '/api/v1/dictionary/find/one/by/{uuid}':
     get:
       operationId: DictionaryController_findOneByUUID
@@ -235,7 +375,7 @@ paths:
         - name: uuid
           required: true
           in: path
-          description: Dictionary id
+          description: Dictionary UUID
           schema:
             type: string
       requestBody:
@@ -294,7 +434,7 @@ paths:
         - name: uuid
           required: true
           in: path
-          description: Dictionary id
+          description: Dictionary UUID
           schema:
             type: string
       responses:
@@ -357,12 +497,125 @@ components:
       description: Enter JWT auth token
       in: header
   schemas:
+    FetchTranslationResponse:
+      type: object
+      properties:
+        uuid:
+          type: string
+          description: UUID string
+          example: 12345678-1234-1234-1234-123456789012
+        value:
+          type: string
+          example: Hello there
+          description: Word or sentence
+        description:
+          type: string
+          example: Some explanation
+          description: 'Dictionary word/sentence description, with examples'
+        language:
+          type: string
+          example: en
+          description: Language code
+      required:
+        - uuid
+        - value
+        - description
+        - language
     CreateTranslationRequest:
       type: object
-      properties: {}
+      properties:
+        dictionaryUUID:
+          type: string
+          example: 12345678-1234-1234-1234-123456789012
+          description: UUID string of the target word/sentence to translate
+        value:
+          type: string
+          example: Explanation
+          description: Word or sentence
+        description:
+          type: string
+          example: Some explanation
+          description: 'Translation word/sentence description, with examples'
+        language:
+          type: string
+          example: en
+          description: Language code
+          enum: &ref_2
+            - en
+            - ru
+            - ka
+            - me
+            - sv
+        source:
+          type: string
+          description: >-
+            Source of the word/sentence, whether it's individually contributed
+            by user, or from a dictionary
+          default: null
+      required:
+        - dictionaryUUID
+        - value
+        - language
+    CreateDictionaryResponse:
+      type: object
+      properties:
+        uuid:
+          type: string
+          description: UUID string
+          example: 12345678-1234-1234-1234-123456789012
+        value:
+          type: string
+          example: Hello there
+          description: Word or sentence
+        description:
+          type: string
+          example: Some explanation
+          description: 'Dictionary word/sentence description, with examples'
+        language:
+          type: string
+          example: en
+          description: Language code
+      required:
+        - uuid
+        - value
+        - description
+        - language
     UpdateTranslationRequest:
       type: object
-      properties: {}
+      properties:
+        dictionaryUUID:
+          type: string
+          example: 12345678-1234-1234-1234-123456789012
+          description: UUID string of the target word/sentence to translate
+        value:
+          type: string
+          example: Explanation
+          description: Word or sentence
+        description:
+          type: string
+          example: Some explanation
+          description: 'Translation word/sentence description, with examples'
+        language:
+          type: string
+          example: en
+          description: Language code
+          enum: *ref_2
+        source:
+          type: string
+          description: >-
+            Source of the word/sentence, whether it's individually contributed
+            by user, or from a dictionary
+          default: null
+        status:
+          type: string
+          description: Record status
+          enum:
+            - ACTIVE
+            - INACTIVE
+            - DELETED
+            - PENDING
+            - REJECTED
+            - HIDDEN
     FetchDictionaryResponse:
       type: object
       properties:
@@ -402,7 +655,7 @@ components:
           type: string
           example: en
           description: Language code
-          enum: &ref_2
+          enum: &ref_3
             - en
             - ru
             - ka
@@ -416,30 +669,6 @@ components:
           default: null
       required:
         - value
-        - language
-    CreateDictionaryResponse:
-      type: object
-      properties:
-        uuid:
-          type: string
-          description: UUID string
-          example: 12345678-1234-1234-1234-123456789012
-        value:
-          type: string
-          example: Hello there
-          description: Word or sentence
-        description:
-          type: string
-          example: Some explanation
-          description: 'Dictionary word/sentence description, with examples'
-        language:
-          type: string
-          example: en
-          description: Language code
-      required:
-        - uuid
-        - value
-        - description
         - language
     UpdateDictionaryRequest:
       type: object
@@ -456,7 +685,7 @@ components:
           type: string
           example: en
           description: Language code
-          enum: *ref_2
+          enum: *ref_3
         source:
           type: string
           description: >-
@@ -465,7 +694,7 @@ components:
           default: null
         status:
           type: string
-          description: Translation status
+          description: Record status
           enum:
             - ACTIVE
             - INACTIVE

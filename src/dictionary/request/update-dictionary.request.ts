@@ -4,14 +4,14 @@ import { STATUS } from '../../__common/enums/status.enum';
 import { IsEnum, IsOptional, IsUUID } from 'class-validator';
 
 export class UpdateDictionaryRequest extends PartialType(CreateDictionaryRequest) {
-  @ApiProperty({ description: 'Translation status', enum: STATUS, required: false })
+  @ApiProperty({ description: 'Record status', enum: STATUS, required: false })
   @IsEnum(STATUS)
   @IsOptional()
   status?: STATUS;
 }
 
 export class UpdateDictionaryRequestParam {
-  @ApiProperty({ description: 'Dictionary id', required: true })
+  @ApiProperty({ description: 'Dictionary UUID', required: true })
   @IsUUID('4')
   uuid: string;
 }

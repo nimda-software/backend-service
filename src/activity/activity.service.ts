@@ -33,4 +33,16 @@ export class ActivityService {
   public addDictionaryDeleted(activity: DictionaryDeleted): Promise<Activity> {
     return this.create(activity, ActivityType.DICTIONARY, ActivityAction.DELETED);
   }
+
+  public addTranslationCreated(activity: DictionaryCreated): Promise<Activity> {
+    return this.create(activity, ActivityType.TRANSLATION, ActivityAction.CREATED);
+  }
+
+  public addTranslationUpdated(activity: DictionaryUpdated): Promise<Activity> {
+    return this.create(activity, ActivityType.TRANSLATION, ActivityAction.UPDATED);
+  }
+
+  public addTranslationDeleted(activity: DictionaryDeleted): Promise<Activity> {
+    return this.create(activity, ActivityType.TRANSLATION, ActivityAction.DELETED);
+  }
 }

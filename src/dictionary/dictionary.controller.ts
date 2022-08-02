@@ -66,9 +66,9 @@ export class DictionaryController {
     return FetchDictionaryResponse.from(records);
   }
 
-  @Post('create/one')
   @ApiProtected()
   @ApiBadRequestResponse()
+  @Post('create/one')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ type: CreateDictionaryResponse, description: 'Returns CREATED when successful' })
   async create(@Body() requestBody: CreateDictionaryRequest): Promise<CreateDictionaryResponse> {
@@ -79,16 +79,16 @@ export class DictionaryController {
       ...(Env.isDev && { status: STATUS.ACTIVE }), // otherwise it will be set to PENDING by default
     };
 
-    const dictionary = await this.dictionaryService.create(payload);
-    await this.activityService.addDictionaryCreated({ createdBy, dictionaryUUID: dictionary.uuid });
+    const created = await this.dictionaryService.create(payload);
+    await this.activityService.addDictionaryCreated({ createdBy, dictionaryUUID: created.uuid });
 
-    return CreateDictionaryResponse.from(dictionary);
+    return CreateDictionaryResponse.from(created);
   }
 
   @ApiProtected()
-  @Patch('update/one/by/:uuid')
   @ApiBadRequestResponse()
   @HttpCode(HttpStatus.NO_CONTENT)
+  @Patch('update/one/by/:uuid')
   @ApiNoContentResponse({ description: 'Returns NO_CONTENT when successful' })
   @ApiNotFoundResponse({ description: 'Returns NOT FOUND when no record found' })
   async update(
@@ -114,9 +114,9 @@ export class DictionaryController {
   }
 
   @ApiProtected()
-  @Delete('delete/one/by/:uuid')
   @ApiBadRequestResponse()
   @HttpCode(HttpStatus.ACCEPTED)
+  @Delete('delete/one/by/:uuid')
   @ApiAcceptedResponse({ description: 'Returns ACCEPTED when successful' })
   @ApiNotFoundResponse({ description: 'Returns NOT FOUND when no record found' })
   async delete(@Param() param: DeleteDictionaryRequestParam): Promise<void> {
