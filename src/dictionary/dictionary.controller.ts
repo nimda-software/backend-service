@@ -10,6 +10,7 @@ import {
   HttpCode,
   Logger,
   NotFoundException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { DictionaryService } from './dictionary.service';
 import { CreateDictionaryRequest } from './request/create-dictionary.request';
@@ -18,9 +19,9 @@ import {
   ApiAcceptedResponse,
   ApiCreatedResponse,
   ApiNoContentResponse,
-  ApiNotFoundResponse,
   ApiResponse,
   ApiTags,
+  ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import { DeleteDictionaryRequestParam } from './request/remove-dictionary.request';
 import { CreateDictionaryResponse } from './response/create-dictionary.response';
@@ -68,7 +69,7 @@ export class DictionaryController {
 
   @ApiProtected()
   @ApiBadRequestResponse()
-  @Post('create/one')
+  @Post('create')
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ type: CreateDictionaryResponse, description: 'Returns CREATED when successful' })
   async create(@Body() requestBody: CreateDictionaryRequest): Promise<CreateDictionaryResponse> {
@@ -88,9 +89,9 @@ export class DictionaryController {
   @ApiProtected()
   @ApiBadRequestResponse()
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Patch('update/one/by/:uuid')
+  @Patch('update/by/:uuid')
   @ApiNoContentResponse({ description: 'Returns NO_CONTENT when successful' })
-  @ApiNotFoundResponse({ description: 'Returns NOT FOUND when no record found' })
+  @ApiUnprocessableEntityResponse({ description: 'Returns UNPROCESSABLE_ENTITY when UUID is wrong' })
   async update(
     @Param() param: UpdateDictionaryRequestParam,
     @Body() requestBody: UpdateDictionaryRequest,
@@ -99,7 +100,7 @@ export class DictionaryController {
     const updatedBy = -1;
 
     const oldValue = await this.dictionaryService.findOneBy(param.uuid);
-    if (!oldValue) throw new NotFoundException('No record found with the given uuid');
+    if (!oldValue) throw new UnprocessableEntityException('No record found with the given uuid');
 
     const updated = await this.dictionaryService.update(param.uuid, requestBody);
     Logger.log(`The record has been updated. Affected rows: ${updated}`);
@@ -116,15 +117,15 @@ export class DictionaryController {
   @ApiProtected()
   @ApiBadRequestResponse()
   @HttpCode(HttpStatus.ACCEPTED)
-  @Delete('delete/one/by/:uuid')
+  @Delete('delete/by/:uuid')
   @ApiAcceptedResponse({ description: 'Returns ACCEPTED when successful' })
-  @ApiNotFoundResponse({ description: 'Returns NOT FOUND when no record found' })
+  @ApiUnprocessableEntityResponse({ description: 'Returns UNPROCESSABLE_ENTITY when UUID is wrong' })
   async delete(@Param() param: DeleteDictionaryRequestParam): Promise<void> {
     // TODO: when user data is available change the deletedBy to the user's id
     const deletedBy = -1;
 
     const deleted = await this.dictionaryService.markAsDeleted(param.uuid);
-    if (deleted.affected === 0) throw new NotFoundException('No record found with the given uuid');
+    if (deleted.affected === 0) throw new UnprocessableEntityException('No record found with the given uuid');
 
     Logger.log(`The record has been removed. Affected rows: ${deleted.affected}`);
 

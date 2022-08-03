@@ -1,18 +1,17 @@
-import { Translation } from '../translation.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { Language } from '../../translation.enum';
 import { Exclude } from 'class-transformer';
-import { STATUS } from '../../__common/enums/status.enum';
-import { Language } from '../translation.enum';
-import { Dictionary } from '../../dictionary/dictionary.entity';
+import { STATUS } from '../../../__common/enums/status.enum';
+import { Translation } from '../../translation.entity';
 
-export class CreateTranslationResponse {
+export class TranslationProperty {
   @ApiProperty({ description: 'UUID string', example: '12345678-1234-1234-1234-123456789012' })
   uuid: string;
 
   @ApiProperty({ example: 'Hello there', description: 'Word or sentence' })
   value: string;
 
-  @ApiProperty({ example: 'Some explanation', description: 'Dictionary word/sentence description, with examples' })
+  @ApiProperty({ example: 'Some explanation', description: 'Translation word/sentence description, with examples' })
   description: string;
 
   @ApiProperty({ example: Language.EN, description: 'Language code' })
@@ -28,9 +27,6 @@ export class CreateTranslationResponse {
   status: STATUS;
 
   @Exclude()
-  dictionary: Dictionary;
-
-  @Exclude()
   createdAt: Date;
 
   @Exclude()
@@ -41,6 +37,6 @@ export class CreateTranslationResponse {
   }
 
   static from(partial: Partial<Translation>) {
-    return new CreateTranslationResponse(partial);
+    return new TranslationProperty(partial);
   }
 }

@@ -65,26 +65,17 @@ export class setup1659473653855 implements MigrationInterface {
       )
     `);
 
-    await queryRunner.query(`ALTER TABLE "translations"
-      ADD "dictionaryId" integer NOT NULL`);
+    await queryRunner.query(`ALTER TABLE "translations" ADD "dictionaryId" integer NOT NULL`);
+    await queryRunner.query(`ALTER TABLE "dictionary" ADD "translationId" integer`);
     await queryRunner.query(
-      `ALTER TABLE "translations"
-        ADD CONSTRAINT "UQ_d5d4d581eafd9d115bbabc123fe" UNIQUE ("dictionaryId")`,
-    );
-    await queryRunner.query(`ALTER TABLE "dictionary"
-      ADD "translationId" integer`);
-    await queryRunner.query(
-      `ALTER TABLE "dictionary"
-        ADD CONSTRAINT "UQ_704652f66661ee4ff721a4b4ec4" UNIQUE ("translationId")`,
+      `ALTER TABLE "dictionary" ADD CONSTRAINT "UQ_704652f66661ee4ff721a4b4ec4" UNIQUE ("translationId")`,
     );
     await queryRunner.query(`
       ALTER TABLE "translations"
         ADD CONSTRAINT "FK_d5d4d581eafd9d115bbabc123fe" FOREIGN KEY ("dictionaryId") REFERENCES "dictionary" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION
     `);
-    await queryRunner.query(`
-      ALTER TABLE "dictionary"
-        ADD CONSTRAINT "FK_704652f66661ee4ff721a4b4ec4" FOREIGN KEY ("translationId") REFERENCES "translations" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION
-    `);
+    await queryRunner.query(`CREATE UNIQUE INDEX "IDX_36bf31af45f7b1cc2a0eb1fb00" ON "dictionary" ("uuid")`);
+    await queryRunner.query(`CREATE UNIQUE INDEX "IDX_f24fc2869d7b53ef295f93ad13" ON "translations" ("uuid")`);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
@@ -98,17 +89,11 @@ export class setup1659473653855 implements MigrationInterface {
     await queryRunner.query(`DROP TYPE "public"."dictionary_language_enum"`);
     await queryRunner.query(`DROP TYPE "public"."translations_status_enum"`);
     await queryRunner.query(`DROP TYPE "public"."translations_language_enum"`);
-    await queryRunner.query(`ALTER TABLE "dictionary"
-      DROP CONSTRAINT "FK_704652f66661ee4ff721a4b4ec4"`);
-    await queryRunner.query(`ALTER TABLE "translations"
-      DROP CONSTRAINT "FK_d5d4d581eafd9d115bbabc123fe"`);
-    await queryRunner.query(`ALTER TABLE "dictionary"
-      DROP CONSTRAINT "UQ_704652f66661ee4ff721a4b4ec4"`);
-    await queryRunner.query(`ALTER TABLE "dictionary"
-      DROP COLUMN "translationId"`);
-    await queryRunner.query(`ALTER TABLE "translations"
-      DROP CONSTRAINT "UQ_d5d4d581eafd9d115bbabc123fe"`);
-    await queryRunner.query(`ALTER TABLE "translations"
-      DROP COLUMN "dictionaryId"`);
+    await queryRunner.query(`ALTER TABLE "translations" DROP CONSTRAINT "FK_d5d4d581eafd9d115bbabc123fe"`);
+    await queryRunner.query(`ALTER TABLE "dictionary" DROP CONSTRAINT "UQ_704652f66661ee4ff721a4b4ec4"`);
+    await queryRunner.query(`ALTER TABLE "dictionary" DROP COLUMN "translationId"`);
+    await queryRunner.query(`ALTER TABLE "translations" DROP COLUMN "dictionaryId"`);
+    await queryRunner.query(`DROP INDEX "public"."IDX_36bf31af45f7b1cc2a0eb1fb00"`);
+    await queryRunner.query(`DROP INDEX "public"."IDX_f24fc2869d7b53ef295f93ad13"`);
   }
 }

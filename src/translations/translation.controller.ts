@@ -10,9 +10,10 @@ import {
   HttpStatus,
   NotFoundException,
   Logger,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { TranslationService } from './translation.service';
-import { CreateTranslationRequest } from './request/create-translation.request';
+import { CreateTranslationRequest, CreateTranslationRequestParam } from './request/create-translation.request';
 import { UpdateTranslationRequest, UpdateTranslationRequestParam } from './request/update-translation.request';
 import {
   ApiAcceptedResponse,
@@ -21,6 +22,7 @@ import {
   ApiNotFoundResponse,
   ApiResponse,
   ApiTags,
+  ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import { ApiBadRequestResponse, ApiProtected } from '../__common/decorators';
 import { FetchTranslationResponse } from './response/fetch-translation.response';
@@ -45,6 +47,7 @@ export class TranslationController {
   @ApiBadRequestResponse()
   @HttpCode(HttpStatus.OK)
   @Get('find/one/by/:uuid')
+  @ApiNotFoundResponse({ description: 'Returns NOT_FOUND when no record found with the given uuid' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Returns OK when successful', type: FetchTranslationResponse })
   async findOneByUUID(@Param() param: FetchDictionaryRequestParam): Promise<FetchTranslationResponse> {
     const record = await this.translateService.findOneBy(param.uuid);
@@ -55,10 +58,14 @@ export class TranslationController {
 
   @ApiProtected()
   @ApiBadRequestResponse()
-  @Post('create/one')
+  @Post('create/for/:dictionaryUUID')
   @HttpCode(HttpStatus.CREATED)
+  @ApiUnprocessableEntityResponse({ description: 'Returns UNPROCESSABLE_ENTITY when UUID is wrong' })
   @ApiCreatedResponse({ type: CreateDictionaryResponse, description: 'Returns CREATED when successful' })
-  async create(@Body() requestBody: CreateTranslationRequest): Promise<FetchTranslationResponse> {
+  async create(
+    @Param() param: CreateTranslationRequestParam,
+    @Body() requestBody: CreateTranslationRequest,
+  ): Promise<FetchTranslationResponse> {
     // TODO: when user data is available change the createdBy to the user's id
     const createdBy = -1;
     const payload: Partial<Translation> = {
@@ -66,10 +73,10 @@ export class TranslationController {
       ...(Env.isDev && { status: STATUS.ACTIVE }), // otherwise it will be set to PENDING by default
     };
 
-    const dictionary = await this.dictionaryService.findOneBy(requestBody.dictionaryUUID);
-    if (!dictionary) throw new NotFoundException('No Dictionary record found with the given uuid');
+    const dictionary = await this.dictionaryService.findOneBy(param.dictionaryUUID);
+    if (!dictionary) throw new UnprocessableEntityException('No Dictionary record found with the given uuid');
 
-    const translation = await this.translateService.create({ ...payload, dictionary });
+    const translation = await this.translateService.create(payload, dictionary);
     await this.activityService.addTranslationCreated({ createdBy, dictionaryUUID: translation.uuid });
 
     return FetchTranslationResponse.from(translation);
@@ -78,15 +85,15 @@ export class TranslationController {
   @ApiProtected()
   @ApiBadRequestResponse()
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Patch('update/one/by/:uuid')
+  @Patch('update/by/:uuid')
   @ApiNoContentResponse({ description: 'Returns NO_CONTENT when successful' })
-  @ApiNotFoundResponse({ description: 'Returns NOT FOUND when no record found' })
+  @ApiUnprocessableEntityResponse({ description: 'Returns UNPROCESSABLE_ENTITY when UUID is wrong' })
   async update(@Param() param: UpdateTranslationRequestParam, @Body() requestBody: UpdateTranslationRequest) {
     // TODO: when user data is available change the updatedBy to the user's id
     const updatedBy = -1;
 
     const oldValue = await this.translateService.findOneBy(param.uuid);
-    if (!oldValue) throw new NotFoundException('No record found with the given uuid');
+    if (!oldValue) throw new UnprocessableEntityException('No record found with the given uuid');
 
     const updated = await this.translateService.update(param.uuid, requestBody);
     Logger.log(`The record has been updated. Affected rows: ${updated}`);
@@ -103,15 +110,15 @@ export class TranslationController {
   @ApiProtected()
   @ApiBadRequestResponse()
   @HttpCode(HttpStatus.ACCEPTED)
-  @Delete('delete/one/by/:uuid')
+  @Delete('delete/by/:uuid')
   @ApiAcceptedResponse({ description: 'Returns ACCEPTED when successful' })
-  @ApiNotFoundResponse({ description: 'Returns NOT FOUND when no record found' })
+  @ApiUnprocessableEntityResponse({ description: 'Returns UNPROCESSABLE_ENTITY when UUID is wrong' })
   async delete(@Param() param: DeleteTranslationRequestParam): Promise<void> {
     // TODO: when user data is available change the deletedBy to the user's id
     const deletedBy = -1;
 
     const deleted = await this.translateService.markAsDeleted(param.uuid);
-    if (deleted.affected === 0) throw new NotFoundException('No record found with the given uuid');
+    if (deleted.affected === 0) throw new UnprocessableEntityException('No record found with the given uuid');
 
     Logger.log(`The record has been removed. Affected rows: ${deleted.affected}`);
 

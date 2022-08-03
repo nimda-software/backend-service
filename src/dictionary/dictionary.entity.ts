@@ -1,4 +1,4 @@
-import { Entity, Generated, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Entity, Generated, PrimaryGeneratedColumn, JoinColumn, OneToMany, Index } from 'typeorm';
 import { Column, CreateDateColumn, UpdateDateColumn } from '../__common/decorators';
 import { Language } from '../translations/translation.enum';
 import { Translation } from '../translations/translation.entity';
@@ -6,6 +6,7 @@ import { TimestampsInterface } from '../__common/interfaces/timestamps.interface
 import { STATUS } from '../__common/enums/status.enum';
 
 @Entity({ name: 'dictionary' })
+@Index(['uuid'], { unique: true })
 export class Dictionary implements TimestampsInterface {
   @PrimaryGeneratedColumn()
   id: number;
@@ -31,7 +32,7 @@ export class Dictionary implements TimestampsInterface {
 
   // Bidirectional relationship with TranslationEntity by specifying inverse side
   @OneToMany(() => Translation, (translation) => translation.dictionary, { nullable: true })
-  @JoinColumn({ name: 'translationId' })
+  @JoinColumn({ name: 'translationId', referencedColumnName: 'id' })
   translations: Translation[];
 
   @CreateDateColumn({ type: 'timestamp' })

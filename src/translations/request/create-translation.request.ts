@@ -3,14 +3,6 @@ import { IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID, MaxLength, MinLength 
 import { Language } from '../translation.enum';
 
 export class CreateTranslationRequest {
-  @ApiProperty({
-    example: '12345678-1234-1234-1234-123456789012',
-    description: 'UUID string of the target word/sentence to translate',
-    required: true,
-  })
-  @IsUUID('4')
-  dictionaryUUID: string;
-
   @ApiProperty({ example: 'Explanation', description: 'Word or sentence', required: true })
   @IsString()
   @IsNotEmpty()
@@ -40,4 +32,14 @@ export class CreateTranslationRequest {
   @IsString()
   @IsOptional()
   source: string;
+}
+
+export class CreateTranslationRequestParam {
+  @ApiProperty({
+    example: '12345678-1234-1234-1234-123456789012',
+    description: 'UUID string of the target word/sentence to translate',
+    required: true,
+  })
+  @IsUUID('4')
+  dictionaryUUID: string;
 }

@@ -12,21 +12,24 @@ export class DictionaryService {
   findOneBy(uuid: string) {
     return this.dictionary.findOne({
       where: { uuid, status: STATUS.ACTIVE },
-      select: ['uuid', 'value', 'description', 'language'],
+      select: ['id', 'uuid', 'value', 'description', 'language', 'updatedAt'],
       relations: { translations: true },
-      order: { createdAt: 'DESC' },
+      order: { updatedAt: 'DESC' },
     });
   }
 
   searchByKeyword(keyword: string, language: Language) {
     return this.dictionary.find({
       relations: { translations: true },
-      select: ['uuid', 'value', 'description', 'language'],
+      select: ['id', 'uuid', 'value', 'description', 'language'],
       where: {
         // ILike does case-insensitive search
         value: ILike(`${keyword}%`),
         status: STATUS.ACTIVE,
-        language,
+        translations: {
+          status: STATUS.ACTIVE,
+          language,
+        },
       },
       take: 16,
     });

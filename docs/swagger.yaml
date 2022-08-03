@@ -55,12 +55,21 @@ paths:
                     type: number
                   error:
                     type: string
+        '404':
+          description: Returns NOT_FOUND when no record found with the given uuid
       tags: &ref_0
         - Translation
-  /api/v1/translation/create/one:
+  '/api/v1/translation/create/for/{dictionaryUUID}':
     post:
       operationId: TranslationController_create
-      parameters: []
+      parameters:
+        - name: dictionaryUUID
+          required: true
+          in: path
+          example: 12345678-1234-1234-1234-123456789012
+          description: UUID string of the target word/sentence to translate
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -109,10 +118,12 @@ paths:
                 example:
                   statusCode: 403
                   message: Forbidden
+        '422':
+          description: Returns UNPROCESSABLE_ENTITY when UUID is wrong
       tags: *ref_0
       security:
         - bearer: []
-  '/api/v1/translation/update/one/by/{uuid}':
+  '/api/v1/translation/update/by/{uuid}':
     patch:
       operationId: TranslationController_update
       parameters:
@@ -166,12 +177,12 @@ paths:
                 example:
                   statusCode: 403
                   message: Forbidden
-        '404':
-          description: Returns NOT FOUND when no record found
+        '422':
+          description: Returns UNPROCESSABLE_ENTITY when UUID is wrong
       tags: *ref_0
       security:
         - bearer: []
-  '/api/v1/translation/delete/one/by/{uuid}':
+  '/api/v1/translation/delete/by/{uuid}':
     delete:
       operationId: TranslationController_delete
       parameters:
@@ -219,8 +230,8 @@ paths:
                 example:
                   statusCode: 403
                   message: Forbidden
-        '404':
-          description: Returns NOT FOUND when no record found
+        '422':
+          description: Returns UNPROCESSABLE_ENTITY when UUID is wrong
       tags: *ref_0
       security:
         - bearer: []
@@ -313,7 +324,7 @@ paths:
                   error:
                     type: string
       tags: *ref_1
-  /api/v1/dictionary/create/one:
+  /api/v1/dictionary/create:
     post:
       operationId: DictionaryController_create
       parameters: []
@@ -368,7 +379,7 @@ paths:
       tags: *ref_1
       security:
         - bearer: []
-  '/api/v1/dictionary/update/one/by/{uuid}':
+  '/api/v1/dictionary/update/by/{uuid}':
     patch:
       operationId: DictionaryController_update
       parameters:
@@ -422,12 +433,12 @@ paths:
                 example:
                   statusCode: 403
                   message: Forbidden
-        '404':
-          description: Returns NOT FOUND when no record found
+        '422':
+          description: Returns UNPROCESSABLE_ENTITY when UUID is wrong
       tags: *ref_1
       security:
         - bearer: []
-  '/api/v1/dictionary/delete/one/by/{uuid}':
+  '/api/v1/dictionary/delete/by/{uuid}':
     delete:
       operationId: DictionaryController_delete
       parameters:
@@ -475,8 +486,8 @@ paths:
                 example:
                   statusCode: 403
                   message: Forbidden
-        '404':
-          description: Returns NOT FOUND when no record found
+        '422':
+          description: Returns UNPROCESSABLE_ENTITY when UUID is wrong
       tags: *ref_1
       security:
         - bearer: []
@@ -524,10 +535,6 @@ components:
     CreateTranslationRequest:
       type: object
       properties:
-        dictionaryUUID:
-          type: string
-          example: 12345678-1234-1234-1234-123456789012
-          description: UUID string of the target word/sentence to translate
         value:
           type: string
           example: Explanation
@@ -553,7 +560,6 @@ components:
             by user, or from a dictionary
           default: null
       required:
-        - dictionaryUUID
         - value
         - language
     CreateDictionaryResponse:
@@ -583,10 +589,6 @@ components:
     UpdateTranslationRequest:
       type: object
       properties:
-        dictionaryUUID:
-          type: string
-          example: 12345678-1234-1234-1234-123456789012
-          description: UUID string of the target word/sentence to translate
         value:
           type: string
           example: Explanation
@@ -616,6 +618,30 @@ components:
             - PENDING
             - REJECTED
             - HIDDEN
+    TranslationProperty:
+      type: object
+      properties:
+        uuid:
+          type: string
+          description: UUID string
+          example: 12345678-1234-1234-1234-123456789012
+        value:
+          type: string
+          example: Hello there
+          description: Word or sentence
+        description:
+          type: string
+          example: Some explanation
+          description: 'Translation word/sentence description, with examples'
+        language:
+          type: string
+          example: en
+          description: Language code
+      required:
+        - uuid
+        - value
+        - description
+        - language
     FetchDictionaryResponse:
       type: object
       properties:
@@ -635,11 +661,16 @@ components:
           type: string
           example: en
           description: Language code
+        translations:
+          type: array
+          items:
+            $ref: '#/components/schemas/TranslationProperty'
       required:
         - uuid
         - value
         - description
         - language
+        - translations
     CreateDictionaryRequest:
       type: object
       properties:

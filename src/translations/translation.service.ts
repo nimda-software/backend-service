@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CreateTranslationRequest } from './request/create-translation.request';
-import { UpdateTranslationRequest } from './request/update-translation.request';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Translation } from './translation.entity';
 import { Repository } from 'typeorm';
 import { STATUS } from '../__common/enums/status.enum';
+import { Dictionary } from '../dictionary/dictionary.entity';
 
 @Injectable()
 export class TranslationService {
@@ -13,13 +12,15 @@ export class TranslationService {
   findOneBy(uuid: string) {
     return this.translation.findOne({
       where: { uuid, status: STATUS.ACTIVE },
-      select: ['uuid', 'value', 'description', 'language'],
+      select: ['id', 'uuid', 'value', 'description', 'language'],
       order: { createdAt: 'DESC' },
     });
   }
 
-  create(payload: Partial<Translation>) {
-    return this.translation.save(payload);
+  create(payload: Partial<Translation>, dictionary: Dictionary) {
+    const translationInstance = this.translation.create({ ...payload, dictionary });
+
+    return this.translation.save(translationInstance);
   }
 
   update(uuid: string, payload: Partial<Translation>) {
