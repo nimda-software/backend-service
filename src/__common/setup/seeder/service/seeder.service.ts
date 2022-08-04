@@ -1,11 +1,15 @@
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import { TestSeedAlterSomeData } from '../seeds/TestSeedAlterSomeData';
+import { AddDefaultValuesForDevelopment } from '../seeds/AddDefaultValuesForDevelopment';
 
 @Injectable()
 export class SeederService implements OnApplicationBootstrap {
   private readonly logger = new Logger('SeederService');
 
-  constructor(private readonly alterSomeData: TestSeedAlterSomeData) {}
+  constructor(
+    private readonly alterSomeData: TestSeedAlterSomeData,
+    private readonly addDefaultValues: AddDefaultValuesForDevelopment,
+  ) {}
 
   async onApplicationBootstrap() {
     return this.seed();
@@ -17,7 +21,10 @@ export class SeederService implements OnApplicationBootstrap {
 
   async seed() {
     // When there is a new seed, add it here
-    const seeds: Promise<{ hasRun: boolean; name: string; error?: string }>[] = [this.alterSomeData.run()];
+    const seeds: Promise<{ hasRun: boolean; name: string; error?: string }>[] = [
+      this.alterSomeData.run(),
+      this.addDefaultValues.run(),
+    ];
 
     await Promise.all(seeds).then((operations) => {
       operations.forEach((operation) => {
