@@ -8,7 +8,7 @@ import { DataSource } from 'typeorm';
 import { ActivityModule } from '../activity/activity.module';
 import { Language } from '../translations/translation.enum';
 import { STATUS } from '../__common/enums/status.enum';
-import { FetchDictionaryRequestParam, SearchDictionaryRequestParam } from './request/fetch-dictionary.request';
+import { FetchDictionaryRequestParam } from './request/fetch-dictionary.request';
 import { FetchDictionaryResponse } from './response/fetch-dictionary.response';
 import { CreateDictionaryRequest } from './request/create-dictionary.request';
 import { CreateDictionaryResponse } from './response/create-dictionary.response';
@@ -68,57 +68,6 @@ describe('DictionaryController', () => {
         uuid: 'invalid-uuid',
       };
       expect(controller.findOneByUUID(param)).rejects.toThrowError('No record found with the given uuid');
-    });
-  });
-
-  describe('searchByKeyword', () => {
-    it('should return a list of matching records', async () => {
-      const payload: Partial<Dictionary>[] = [
-        {
-          value: 'Hello',
-          description: 'An expression or gesture of greeting',
-          language: Language.EN,
-          source: 'Individual contributor',
-          status: STATUS.ACTIVE,
-        },
-        {
-          value: 'Hello',
-          description: 'An expression or gesture of greeting',
-          language: Language.EN,
-          source: 'Individual contributor',
-          status: STATUS.ACTIVE,
-        },
-        {
-          value: 'Hi',
-          description: 'An expression or gesture of greeting',
-          language: Language.EN,
-          source: 'Individual contributor',
-          status: STATUS.ACTIVE,
-        },
-      ];
-      await connection.getRepository(Dictionary).save(payload);
-      const param: SearchDictionaryRequestParam = {
-        keyword: 'Hell',
-        language: Language.EN,
-      };
-      const result = await controller.searchByKeyword(param);
-      expect(result).toHaveLength(2);
-      expect(result).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ value: payload[0].value }),
-          expect.objectContaining({ value: payload[1].value }),
-          expect.not.objectContaining({ value: payload[2].value }),
-        ]),
-      );
-    });
-
-    it('should return an empty list when no matching any records', async () => {
-      const param: SearchDictionaryRequestParam = {
-        keyword: 'Hello',
-        language: Language.EN,
-      };
-      const result = await controller.searchByKeyword(param);
-      expect(result).toEqual([]);
     });
   });
 

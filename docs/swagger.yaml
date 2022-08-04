@@ -19,7 +19,7 @@ paths:
                     example: alive
       tags:
         - Health
-  '/api/v1/translation/find/one/by/{uuid}':
+  '/api/v1/translation/find/by/{uuid}':
     get:
       operationId: TranslationController_findOneByUUID
       parameters:
@@ -59,15 +59,15 @@ paths:
           description: Returns NOT_FOUND when no record found with the given uuid
       tags: &ref_0
         - Translation
-  '/api/v1/translation/create/for/{dictionaryUUID}':
+  '/api/v1/translation/create/for/{uuid}':
     post:
       operationId: TranslationController_create
       parameters:
-        - name: dictionaryUUID
+        - name: uuid
           required: true
           in: path
           example: 12345678-1234-1234-1234-123456789012
-          description: UUID string of the target word/sentence to translate
+          description: UUID of the dictionary
           schema:
             type: string
       requestBody:
@@ -235,7 +235,7 @@ paths:
       tags: *ref_0
       security:
         - bearer: []
-  '/api/v1/dictionary/find/one/by/{uuid}':
+  '/api/v1/dictionary/find/by/{uuid}':
     get:
       operationId: DictionaryController_findOneByUUID
       parameters:
@@ -273,57 +273,6 @@ paths:
                     type: string
       tags: &ref_1
         - Dictionary
-  '/api/v1/dictionary/find/many/by/{keyword}/{language}':
-    get:
-      operationId: DictionaryController_searchByKeyword
-      parameters:
-        - name: keyword
-          required: true
-          in: path
-          description: Search by keyword
-          schema:
-            type: string
-        - name: language
-          required: true
-          in: path
-          description: Search by language
-          schema:
-            enum:
-              - en
-              - ru
-              - ka
-              - me
-              - sv
-            type: string
-      responses:
-        '200':
-          description: Returns OK when successful
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/FetchDictionaryResponse'
-        '400':
-          description: Returns BAD_REQUEST when the payload is invalid or malformed.
-          content:
-            application/json:
-              schema:
-                type: object
-                example:
-                  statusCode: 400
-                  message:
-                    - name should not be empty
-                    - name should be string
-                  error: Bad Request
-                properties:
-                  message:
-                    type: array
-                  statusCode:
-                    type: number
-                  error:
-                    type: string
-      tags: *ref_1
   /api/v1/dictionary/create:
     post:
       operationId: DictionaryController_create
@@ -491,6 +440,58 @@ paths:
       tags: *ref_1
       security:
         - bearer: []
+  '/api/v1/search/search/by/{keyword}/{language}':
+    get:
+      operationId: SearchController_searchByKeyword
+      parameters:
+        - name: keyword
+          required: true
+          in: path
+          description: What keyword to use
+          schema:
+            type: string
+        - name: language
+          required: true
+          in: path
+          description: What language to use
+          schema:
+            enum:
+              - en
+              - ru
+              - ka
+              - me
+              - sv
+            type: string
+      responses:
+        '200':
+          description: Returns OK when successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FetchDictionaryResponse'
+        '400':
+          description: Returns BAD_REQUEST when the payload is invalid or malformed.
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  statusCode: 400
+                  message:
+                    - name should not be empty
+                    - name should be string
+                  error: Bad Request
+                properties:
+                  message:
+                    type: array
+                  statusCode:
+                    type: number
+                  error:
+                    type: string
+      tags:
+        - Search
 info:
   title: Megrulad.ge Backend Service
   description: Main translation backend service

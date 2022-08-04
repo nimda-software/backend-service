@@ -18,7 +18,7 @@ export class CreateDictionaryRequest {
   @IsString()
   @IsOptional()
   @MaxLength(1024)
-  description: string;
+  description?: string;
 
   @ApiProperty({ example: Language.EN, description: 'Language code', enum: Language, required: true })
   @IsEnum(Language)
@@ -31,5 +31,5 @@ export class CreateDictionaryRequest {
   })
   @IsString()
   @IsOptional()
-  source: string;
+  source?: string;
 }

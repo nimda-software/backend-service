@@ -8,6 +8,7 @@ import { v4 as uuidV4 } from 'uuid';
 import { CreateDictionaryRequest } from './request/create-dictionary.request';
 import { Language } from '../translations/translation.enum';
 import { STATUS } from '../__common/enums/status.enum';
+import { Translation } from '../translations/translation.entity';
 
 describe('DictionaryService', () => {
   let service: DictionaryService;
@@ -32,23 +33,26 @@ describe('DictionaryService', () => {
   describe('findOneBy', () => {
     it('should return a record with the strict properties', async () => {
       const dictionaryRepository = connection.getRepository(Dictionary);
-      const payload: CreateDictionaryRequest = {
+      const payload: CreateDictionaryRequest & { status: STATUS } = {
         value: 'Hello',
         description: 'An expression or gesture of greeting',
         language: Language.EN,
         source: 'Individual contributor',
+        status: STATUS.ACTIVE, // Status should be active to appear in search results
       };
       const dictionary = await dictionaryRepository.save(payload);
       await service.markAsActive(dictionary.uuid);
 
       const result = await service.findOneBy(dictionary.uuid);
       expect(result).not.toEqual(dictionary);
-      expect(result).toEqual({
-        uuid: dictionary.uuid,
-        value: dictionary.value,
-        description: dictionary.description,
-        language: dictionary.language,
-      });
+      expect(result).toEqual(
+        expect.objectContaining({
+          uuid: dictionary.uuid,
+          value: dictionary.value,
+          description: dictionary.description,
+          language: dictionary.language,
+        }),
+      );
     });
 
     it('should return empty/null value when not matching any records', async () => {
@@ -57,13 +61,14 @@ describe('DictionaryService', () => {
       expect(result).toBeNull();
     });
 
-    it('should return empty/null value when the state is not ACTIVE', async () => {
+    it('should return empty/null value when the status is not ACTIVE', async () => {
       const dictionaryRepository = connection.getRepository(Dictionary);
-      const payload: CreateDictionaryRequest = {
+      const payload: CreateDictionaryRequest & { status: STATUS } = {
         value: 'Hello',
         description: 'An expression or gesture of greeting',
         language: Language.EN,
         source: 'Individual contributor',
+        status: STATUS.PENDING,
       };
       const dictionary = await dictionaryRepository.save(payload);
       const result = await service.findOneBy(dictionary.uuid);
@@ -72,25 +77,44 @@ describe('DictionaryService', () => {
   });
 
   describe('searchByKeyword', () => {
-    it('should return a list of matching records (case-insensitive)', async () => {
+    it('should return a list of matching records (case-insensitive) with translations', async () => {
       const dictionaryRepository = connection.getRepository(Dictionary);
-      const payload01: CreateDictionaryRequest = {
+      const translationRepository = connection.getRepository(Translation);
+      const payload01: CreateDictionaryRequest & { status: STATUS } = {
         value: 'Hello',
         description: 'An expression or gesture of greeting',
         language: Language.EN,
         source: 'Individual contributor',
+        status: STATUS.ACTIVE,
       };
-      const payload02: CreateDictionaryRequest = {
+      const payload02: CreateDictionaryRequest & { status: STATUS } = {
         value: 'Goodbye',
         description: 'Used to express good wishes when parting or at the end of a conversation.',
         language: Language.EN,
         source: 'Individual contributor',
+        status: STATUS.ACTIVE,
       };
-      const response01 = await dictionaryRepository.save(payload01);
-      const response02 = await dictionaryRepository.save(payload02);
+      const dictionary01 = await dictionaryRepository.save(payload01);
+      const dictionary02 = await dictionaryRepository.save(payload02);
 
-      await service.markAsActive(response01.uuid);
-      await service.markAsActive(response02.uuid);
+      const translation01 = translationRepository.create({
+        value: 'გამარჯობა',
+        status: STATUS.ACTIVE,
+        language: Language.KA,
+      });
+      translation01.dictionary = dictionary01;
+      await translationRepository.save(translation01);
+
+      const translation02 = await translationRepository.create({
+        value: 'ნახვამდისა',
+        status: STATUS.ACTIVE,
+        language: Language.KA,
+      });
+      translation02.dictionary = dictionary02;
+      await translationRepository.save(translation02);
+
+      await service.markAsActive(dictionary01.uuid);
+      await service.markAsActive(dictionary02.uuid);
 
       const search01 = await service.searchByKeyword('h', Language.EN);
       const search02 = await service.searchByKeyword('H', Language.EN);
@@ -104,30 +128,39 @@ describe('DictionaryService', () => {
       expect(search04).toHaveLength(1);
       expect(search05).toHaveLength(1);
 
-      expect(search01).toEqual([
-        {
-          uuid: response01.uuid,
-          value: response01.value,
-          description: response01.description,
-          language: response01.language,
-        },
-      ]);
-      expect(search02).toEqual([
-        {
-          uuid: response01.uuid,
-          value: response01.value,
-          description: response01.description,
-          language: response01.language,
-        },
-      ]);
-      expect(search05).toEqual([
-        {
-          uuid: response02.uuid,
-          value: response02.value,
-          description: response02.description,
-          language: response02.language,
-        },
-      ]);
+      expect(search01).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            uuid: dictionary01.uuid,
+            value: dictionary01.value,
+            description: dictionary01.description,
+            language: dictionary01.language,
+            translations: expect.arrayContaining([expect.any(Translation)]),
+          }),
+        ]),
+      );
+      expect(search02).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            uuid: dictionary01.uuid,
+            value: dictionary01.value,
+            description: dictionary01.description,
+            language: dictionary01.language,
+            translations: expect.arrayContaining([expect.any(Translation)]),
+          }),
+        ]),
+      );
+      expect(search05).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            uuid: dictionary02.uuid,
+            value: dictionary02.value,
+            description: dictionary02.description,
+            language: dictionary02.language,
+            translations: expect.arrayContaining([expect.any(Translation)]),
+          }),
+        ]),
+      );
     });
     it('should return an empty list when no matching any records', async () => {
       const search03 = await service.searchByKeyword('Goodbye, Morty', Language.EN);

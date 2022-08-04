@@ -18,7 +18,7 @@ export class CreateTranslationRequest {
   @IsString()
   @IsOptional()
   @MaxLength(1024)
-  description: string;
+  description?: string;
 
   @ApiProperty({ example: Language.EN, description: 'Language code', enum: Language, required: true })
   @IsEnum(Language)
@@ -31,15 +31,15 @@ export class CreateTranslationRequest {
   })
   @IsString()
   @IsOptional()
-  source: string;
+  source?: string;
 }
 
 export class CreateTranslationRequestParam {
   @ApiProperty({
     example: '12345678-1234-1234-1234-123456789012',
-    description: 'UUID string of the target word/sentence to translate',
+    description: 'UUID of the dictionary',
     required: true,
   })
   @IsUUID('4')
-  dictionaryUUID: string;
+  uuid: string;
 }

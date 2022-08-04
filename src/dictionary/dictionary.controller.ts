@@ -26,7 +26,7 @@ import {
 import { DeleteDictionaryRequestParam } from './request/remove-dictionary.request';
 import { CreateDictionaryResponse } from './response/create-dictionary.response';
 import { ApiBadRequestResponse, ApiProtected } from '../__common/decorators';
-import { FetchDictionaryRequestParam, SearchDictionaryRequestParam } from './request/fetch-dictionary.request';
+import { FetchDictionaryRequestParam } from './request/fetch-dictionary.request';
 import { FetchDictionaryResponse } from './response/fetch-dictionary.response';
 import { ActivityService } from '../activity/activity.service';
 import { STATUS } from '../__common/enums/status.enum';
@@ -41,7 +41,7 @@ export class DictionaryController {
     private readonly activityService: ActivityService,
   ) {}
 
-  @Get('find/one/by/:uuid')
+  @Get('find/by/:uuid')
   @ApiBadRequestResponse()
   @HttpCode(HttpStatus.OK)
   @ApiResponse({ status: HttpStatus.OK, description: 'Returns OK when successful', type: FetchDictionaryResponse })
@@ -50,21 +50,6 @@ export class DictionaryController {
     if (!record) throw new NotFoundException('No record found with the given uuid');
 
     return FetchDictionaryResponse.from(record);
-  }
-
-  @Get('find/many/by/:keyword/:language')
-  @ApiBadRequestResponse()
-  @HttpCode(HttpStatus.OK)
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Returns OK when successful',
-    type: FetchDictionaryResponse,
-    isArray: true,
-  })
-  async searchByKeyword(@Param() param: SearchDictionaryRequestParam): Promise<FetchDictionaryResponse[]> {
-    const records = await this.dictionaryService.searchByKeyword(param.keyword, param.language);
-
-    return FetchDictionaryResponse.from(records);
   }
 
   @ApiProtected()

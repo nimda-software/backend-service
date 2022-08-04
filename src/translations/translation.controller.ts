@@ -46,7 +46,7 @@ export class TranslationController {
 
   @ApiBadRequestResponse()
   @HttpCode(HttpStatus.OK)
-  @Get('find/one/by/:uuid')
+  @Get('find/by/:uuid')
   @ApiNotFoundResponse({ description: 'Returns NOT_FOUND when no record found with the given uuid' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Returns OK when successful', type: FetchTranslationResponse })
   async findOneByUUID(@Param() param: FetchDictionaryRequestParam): Promise<FetchTranslationResponse> {
@@ -58,7 +58,7 @@ export class TranslationController {
 
   @ApiProtected()
   @ApiBadRequestResponse()
-  @Post('create/for/:dictionaryUUID')
+  @Post('create/for/:uuid')
   @HttpCode(HttpStatus.CREATED)
   @ApiUnprocessableEntityResponse({ description: 'Returns UNPROCESSABLE_ENTITY when UUID is wrong' })
   @ApiCreatedResponse({ type: CreateDictionaryResponse, description: 'Returns CREATED when successful' })
@@ -73,7 +73,7 @@ export class TranslationController {
       ...(Env.isDev && { status: STATUS.ACTIVE }), // otherwise it will be set to PENDING by default
     };
 
-    const dictionary = await this.dictionaryService.findOneBy(param.dictionaryUUID);
+    const dictionary = await this.dictionaryService.findOneBy(param.uuid);
     if (!dictionary) throw new UnprocessableEntityException('No Dictionary record found with the given uuid');
 
     const translation = await this.translateService.create(payload, dictionary);

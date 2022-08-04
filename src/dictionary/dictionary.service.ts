@@ -18,20 +18,20 @@ export class DictionaryService {
     });
   }
 
-  searchByKeyword(keyword: string, language: Language) {
+  searchByKeyword(keyword: string, keywordLanguage: Language) {
     return this.dictionary.find({
-      relations: { translations: true },
+      relations: ['translations'],
       select: ['id', 'uuid', 'value', 'description', 'language'],
       where: {
         // ILike does case-insensitive search
         value: ILike(`${keyword}%`),
         status: STATUS.ACTIVE,
+        language: keywordLanguage,
         translations: {
           status: STATUS.ACTIVE,
-          language,
         },
       },
-      take: 16,
+      take: 32, // limit to 32 results
     });
   }
 
