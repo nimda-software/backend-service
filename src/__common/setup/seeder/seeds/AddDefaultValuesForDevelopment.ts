@@ -8,7 +8,9 @@ import { Dictionary } from '../../../../dictionary/dictionary.entity';
 import { Translation } from '../../../../translations/translation.entity';
 import { Language } from '../../../../translations/translation.enum';
 import { STATUS } from '../../../enums/status.enum';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class AddDefaultValuesForDevelopment extends BaseSeed implements SeedInterface {
   constructor(
     @InjectRepository(Seed) protected readonly seedRepository: Repository<Seed>,

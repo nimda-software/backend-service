@@ -5,6 +5,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { Seed } from '../entity/seeder.entity';
 import { TestSeedAlterSomeData } from '../seeds/TestSeedAlterSomeData';
+import { Translation } from '../../../../translations/translation.entity';
+import { Dictionary } from '../../../../dictionary/dictionary.entity';
+import { AddDefaultValuesForDevelopment } from '../seeds/AddDefaultValuesForDevelopment';
 
 describe('SeederService', () => {
   let service: SeederService;
@@ -12,8 +15,8 @@ describe('SeederService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [SetupModule, TypeOrmModule.forFeature([Seed])],
-      providers: [SeederService, TestSeedAlterSomeData],
+      imports: [SetupModule, TypeOrmModule.forFeature([Seed, Translation, Dictionary])],
+      providers: [SeederService, TestSeedAlterSomeData, AddDefaultValuesForDevelopment],
     }).compile();
     connection = module.get<DataSource>(DataSource);
     service = module.get<SeederService>(SeederService);
