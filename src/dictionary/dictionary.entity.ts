@@ -1,11 +1,13 @@
 import { Entity, Generated, PrimaryGeneratedColumn, JoinColumn, OneToMany, Index } from 'typeorm';
-import { Column, CreateDateColumn, UpdateDateColumn } from '../__common/decorators';
 import { Language } from '../translations/translation.enum';
 import { Translation } from '../translations/translation.entity';
-import { TimestampsInterface } from '../__common/interfaces/timestamps.interface';
-import { STATUS } from '../__common/enums/status.enum';
+import { TimestampsInterface } from '/common/interfaces/timestamps.interface';
+import { STATUS } from '/common/enums/status.enum';
+import { Column } from '/common/decorators/column.decorator';
+import { CreateDateColumn } from '/common/decorators/create-date-column.decorator';
+import { UpdateDateColumn } from '/common/decorators/update-date-column.decorator';
 
-@Entity({ name: 'dictionary' })
+@Entity({ name: 'Dictionary' })
 @Index(['uuid'], { unique: true })
 export class Dictionary implements TimestampsInterface {
   @PrimaryGeneratedColumn()

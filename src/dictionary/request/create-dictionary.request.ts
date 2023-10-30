@@ -1,4 +1,4 @@
-import { Language } from '../../translations/translation.enum';
+import { Language } from '/src/translations/translation.enum';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 

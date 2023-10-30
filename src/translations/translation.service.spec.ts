@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TranslationService } from './translation.service';
-import { SetupModule } from '../__common/setup/setup.module';
+import { SetupModule } from '/common/setup/setup.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Translation } from './translation.entity';
 

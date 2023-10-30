@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TranslationController } from './translation.controller';
 import { TranslationService } from './translation.service';
-import { SetupModule } from '../__common/setup/setup.module';
+import { SetupModule } from '/common/setup/setup.module';
 import { Translation } from './translation.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Dictionary } from '../dictionary/dictionary.entity';

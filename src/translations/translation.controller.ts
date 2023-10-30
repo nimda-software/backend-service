@@ -1,15 +1,15 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
   HttpCode,
   HttpStatus,
-  NotFoundException,
   Logger,
+  NotFoundException,
+  Param,
+  Patch,
+  Post,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { TranslationService } from './translation.service';
@@ -24,16 +24,17 @@ import {
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
-import { ApiBadRequestResponse, ApiProtected } from '../__common/decorators';
 import { FetchTranslationResponse } from './response/fetch-translation.response';
 import { CreateDictionaryResponse } from '../dictionary/response/create-dictionary.response';
-import { Env } from '../__common/env';
-import { STATUS } from '../__common/enums/status.enum';
+import { Env } from '/common/env';
+import { STATUS } from '/common/enums/status.enum';
 import { Translation } from './translation.entity';
 import { ActivityService } from '../activity/activity.service';
 import { DeleteTranslationRequestParam } from './request/remove-translation.request';
 import { FetchDictionaryRequestParam } from '../dictionary/request/fetch-dictionary.request';
 import { DictionaryService } from '../dictionary/dictionary.service';
+import { ApiBadRequestResponse } from '/common/decorators/open-api-bad-request.decorator';
+import { ApiProtected } from '/common/decorators/open-api-protected-route.decorator';
 
 @ApiTags('Translation')
 @Controller('translation')

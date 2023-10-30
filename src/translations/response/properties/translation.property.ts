@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Language } from '../../translation.enum';
 import { Exclude } from 'class-transformer';
-import { STATUS } from '../../../__common/enums/status.enum';
+import { STATUS } from '/common/enums/status.enum';
 import { Translation } from '../../translation.entity';
 
 export class TranslationProperty {

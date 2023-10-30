@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ActivityService } from './activity.service';
-import { SetupModule } from '../__common/setup/setup.module';
+import { SetupModule } from '/common/setup/setup.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Activity } from './activity.entity';
 import { ActivityAction, ActivityType } from './activity.enum';

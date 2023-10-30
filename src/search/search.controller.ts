@@ -1,9 +1,9 @@
 import { Controller, Get, HttpCode, HttpStatus, Param } from '@nestjs/common';
-import { ApiBadRequestResponse } from '../__common/decorators';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FetchDictionaryResponse } from '../dictionary/response/fetch-dictionary.response';
 import { DictionaryService } from '../dictionary/dictionary.service';
 import { SearchDictionaryRequestParam } from './request/search-dictionary.request';
+import { ApiBadRequestResponse } from '/common/decorators/open-api-bad-request.decorator';
 
 @ApiTags('Search')
 @Controller('search')

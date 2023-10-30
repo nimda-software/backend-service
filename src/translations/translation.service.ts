@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Translation } from './translation.entity';
 import { Repository } from 'typeorm';
-import { STATUS } from '../__common/enums/status.enum';
+import { STATUS } from '/common/enums/status.enum';
 import { Dictionary } from '../dictionary/dictionary.entity';
 
 @Injectable()

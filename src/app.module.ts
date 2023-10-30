@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { SetupModule } from './__common/setup/setup.module';
+import { SetupModule } from '/common/setup/setup.module';
 import { HealthModule } from './health/health.module';
 import { TranslationModule } from './translations/translation.module';
 import { DictionaryModule } from './dictionary/dictionary.module';

@@ -1,9 +1,9 @@
 import { Translation } from '../translation.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
-import { STATUS } from '../../__common/enums/status.enum';
+import { STATUS } from '/common/enums/status.enum';
 import { Language } from '../translation.enum';
-import { Dictionary } from '../../dictionary/dictionary.entity';
+import { Dictionary } from '/src/dictionary/dictionary.entity';
 
 export class CreateTranslationResponse {
   @ApiProperty({ description: 'UUID string', example: '12345678-1234-1234-1234-123456789012' })

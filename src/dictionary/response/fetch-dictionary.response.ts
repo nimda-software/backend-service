@@ -1,7 +1,7 @@
 import { Dictionary } from '../dictionary.entity';
 import { CreateDictionaryResponse } from './create-dictionary.response';
 import { ApiProperty } from '@nestjs/swagger';
-import { TranslationProperty } from '../../translations/response/properties/translation.property';
+import { TranslationProperty } from '/src/translations/response/properties/translation.property';
 import { ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 

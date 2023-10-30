@@ -19,7 +19,7 @@ paths:
                     example: alive
       tags:
         - Health
-  '/api/v1/translation/find/by/{uuid}':
+  /api/v1/translation/find/by/{uuid}:
     get:
       operationId: TranslationController_findOneByUUID
       parameters:
@@ -41,25 +41,12 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                example:
-                  statusCode: 400
-                  message:
-                    - name should not be empty
-                    - name should be string
-                  error: Bad Request
-                properties:
-                  message:
-                    type: array
-                  statusCode:
-                    type: number
-                  error:
-                    type: string
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Returns NOT_FOUND when no record found with the given uuid
       tags: &ref_0
         - Translation
-  '/api/v1/translation/create/for/{uuid}':
+  /api/v1/translation/create/for/{uuid}:
     post:
       operationId: TranslationController_create
       parameters:
@@ -88,22 +75,9 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                example:
-                  statusCode: 400
-                  message:
-                    - name should not be empty
-                    - name should be string
-                  error: Bad Request
-                properties:
-                  message:
-                    type: array
-                  statusCode:
-                    type: number
-                  error:
-                    type: string
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
-          description: 'Returns UNAUTHORIZED when JWT is not provided, invalid or expired.'
+          description: Returns UNAUTHORIZED when JWT is not provided, invalid or expired.
           content:
             application/json:
               schema:
@@ -123,7 +97,7 @@ paths:
       tags: *ref_0
       security:
         - bearer: []
-  '/api/v1/translation/update/by/{uuid}':
+  /api/v1/translation/update/by/{uuid}:
     patch:
       operationId: TranslationController_update
       parameters:
@@ -147,22 +121,9 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                example:
-                  statusCode: 400
-                  message:
-                    - name should not be empty
-                    - name should be string
-                  error: Bad Request
-                properties:
-                  message:
-                    type: array
-                  statusCode:
-                    type: number
-                  error:
-                    type: string
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
-          description: 'Returns UNAUTHORIZED when JWT is not provided, invalid or expired.'
+          description: Returns UNAUTHORIZED when JWT is not provided, invalid or expired.
           content:
             application/json:
               schema:
@@ -182,7 +143,7 @@ paths:
       tags: *ref_0
       security:
         - bearer: []
-  '/api/v1/translation/delete/by/{uuid}':
+  /api/v1/translation/delete/by/{uuid}:
     delete:
       operationId: TranslationController_delete
       parameters:
@@ -200,22 +161,9 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                example:
-                  statusCode: 400
-                  message:
-                    - name should not be empty
-                    - name should be string
-                  error: Bad Request
-                properties:
-                  message:
-                    type: array
-                  statusCode:
-                    type: number
-                  error:
-                    type: string
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
-          description: 'Returns UNAUTHORIZED when JWT is not provided, invalid or expired.'
+          description: Returns UNAUTHORIZED when JWT is not provided, invalid or expired.
           content:
             application/json:
               schema:
@@ -235,7 +183,7 @@ paths:
       tags: *ref_0
       security:
         - bearer: []
-  '/api/v1/dictionary/find/by/{uuid}':
+  /api/v1/dictionary/find/by/{uuid}:
     get:
       operationId: DictionaryController_findOneByUUID
       parameters:
@@ -257,20 +205,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                example:
-                  statusCode: 400
-                  message:
-                    - name should not be empty
-                    - name should be string
-                  error: Bad Request
-                properties:
-                  message:
-                    type: array
-                  statusCode:
-                    type: number
-                  error:
-                    type: string
+                $ref: '#/components/schemas/ErrorResponse'
       tags: &ref_1
         - Dictionary
   /api/v1/dictionary/create:
@@ -285,7 +220,7 @@ paths:
               $ref: '#/components/schemas/CreateDictionaryRequest'
       responses:
         '201':
-          description: Returns CREATED when successful
+          description: Returns CREATED when the resource successfully created.
           content:
             application/json:
               schema:
@@ -295,22 +230,9 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                example:
-                  statusCode: 400
-                  message:
-                    - name should not be empty
-                    - name should be string
-                  error: Bad Request
-                properties:
-                  message:
-                    type: array
-                  statusCode:
-                    type: number
-                  error:
-                    type: string
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
-          description: 'Returns UNAUTHORIZED when JWT is not provided, invalid or expired.'
+          description: Returns UNAUTHORIZED when JWT is not provided, invalid or expired.
           content:
             application/json:
               schema:
@@ -328,7 +250,7 @@ paths:
       tags: *ref_1
       security:
         - bearer: []
-  '/api/v1/dictionary/update/by/{uuid}':
+  /api/v1/dictionary/update/by/{uuid}:
     patch:
       operationId: DictionaryController_update
       parameters:
@@ -352,22 +274,9 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                example:
-                  statusCode: 400
-                  message:
-                    - name should not be empty
-                    - name should be string
-                  error: Bad Request
-                properties:
-                  message:
-                    type: array
-                  statusCode:
-                    type: number
-                  error:
-                    type: string
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
-          description: 'Returns UNAUTHORIZED when JWT is not provided, invalid or expired.'
+          description: Returns UNAUTHORIZED when JWT is not provided, invalid or expired.
           content:
             application/json:
               schema:
@@ -384,10 +293,14 @@ paths:
                   message: Forbidden
         '422':
           description: Returns UNPROCESSABLE_ENTITY when UUID is wrong
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       tags: *ref_1
       security:
         - bearer: []
-  '/api/v1/dictionary/delete/by/{uuid}':
+  /api/v1/dictionary/delete/by/{uuid}:
     delete:
       operationId: DictionaryController_delete
       parameters:
@@ -405,22 +318,9 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                example:
-                  statusCode: 400
-                  message:
-                    - name should not be empty
-                    - name should be string
-                  error: Bad Request
-                properties:
-                  message:
-                    type: array
-                  statusCode:
-                    type: number
-                  error:
-                    type: string
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
-          description: 'Returns UNAUTHORIZED when JWT is not provided, invalid or expired.'
+          description: Returns UNAUTHORIZED when JWT is not provided, invalid or expired.
           content:
             application/json:
               schema:
@@ -437,10 +337,14 @@ paths:
                   message: Forbidden
         '422':
           description: Returns UNPROCESSABLE_ENTITY when UUID is wrong
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       tags: *ref_1
       security:
         - bearer: []
-  '/api/v1/search/search/by/{keyword}/{language}':
+  /api/v1/search/search/by/{keyword}/{language}:
     get:
       operationId: SearchController_searchByKeyword
       parameters:
@@ -476,20 +380,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                example:
-                  statusCode: 400
-                  message:
-                    - name should not be empty
-                    - name should be string
-                  error: Bad Request
-                properties:
-                  message:
-                    type: array
-                  statusCode:
-                    type: number
-                  error:
-                    type: string
+                $ref: '#/components/schemas/ErrorResponse'
       tags:
         - Search
 info:
@@ -523,7 +414,7 @@ components:
         description:
           type: string
           example: Some explanation
-          description: 'Dictionary word/sentence description, with examples'
+          description: Dictionary word/sentence description, with examples
         language:
           type: string
           example: en
@@ -533,6 +424,21 @@ components:
         - value
         - description
         - language
+    ErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: number
+          description: HTTP status code
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Error details
+      required:
+        - statusCode
+        - message
     CreateTranslationRequest:
       type: object
       properties:
@@ -543,7 +449,7 @@ components:
         description:
           type: string
           example: Some explanation
-          description: 'Translation word/sentence description, with examples'
+          description: Translation word/sentence description, with examples
         language:
           type: string
           example: en
@@ -577,7 +483,7 @@ components:
         description:
           type: string
           example: Some explanation
-          description: 'Dictionary word/sentence description, with examples'
+          description: Dictionary word/sentence description, with examples
         language:
           type: string
           example: en
@@ -597,7 +503,7 @@ components:
         description:
           type: string
           example: Some explanation
-          description: 'Translation word/sentence description, with examples'
+          description: Translation word/sentence description, with examples
         language:
           type: string
           example: en
@@ -633,7 +539,7 @@ components:
         description:
           type: string
           example: Some explanation
-          description: 'Translation word/sentence description, with examples'
+          description: Translation word/sentence description, with examples
         language:
           type: string
           example: en
@@ -657,7 +563,7 @@ components:
         description:
           type: string
           example: Some explanation
-          description: 'Dictionary word/sentence description, with examples'
+          description: Dictionary word/sentence description, with examples
         language:
           type: string
           example: en
@@ -682,7 +588,7 @@ components:
         description:
           type: string
           example: Some explanation
-          description: 'Dictionary word/sentence description, with examples'
+          description: Dictionary word/sentence description, with examples
         language:
           type: string
           example: en
@@ -712,7 +618,7 @@ components:
         description:
           type: string
           example: Some explanation
-          description: 'Dictionary word/sentence description, with examples'
+          description: Dictionary word/sentence description, with examples
         language:
           type: string
           example: en

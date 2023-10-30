@@ -1,13 +1,13 @@
 ARG BUILD_ENV
-ARG BUILD_IMAGE="node:18.6.0-alpine"
+ARG BUILD_IMAGE="node:20.9.0-alpine"
 ARG PORT=8300
 
-FROM $BUILD_IMAGE as server
+FROM $BUILD_IMAGE AS server
 ENV BUILD_ENV=${BUILD_ENV:-production}
 WORKDIR /service
 
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm ci --production
 COPY . .
 RUN npm run build
 

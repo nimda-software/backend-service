@@ -1,6 +1,6 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { CreateTranslationRequest } from './create-translation.request';
-import { STATUS } from '../../__common/enums/status.enum';
+import { STATUS } from '/common/enums/status.enum';
 import { IsEnum, IsOptional, IsUUID } from 'class-validator';
 
 export class UpdateTranslationRequest extends PartialType(CreateTranslationRequest) {

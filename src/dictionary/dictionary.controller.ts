@@ -15,23 +15,19 @@ import {
 import { DictionaryService } from './dictionary.service';
 import { CreateDictionaryRequest } from './request/create-dictionary.request';
 import { UpdateDictionaryRequest, UpdateDictionaryRequestParam } from './request/update-dictionary.request';
-import {
-  ApiAcceptedResponse,
-  ApiCreatedResponse,
-  ApiNoContentResponse,
-  ApiResponse,
-  ApiTags,
-  ApiUnprocessableEntityResponse,
-} from '@nestjs/swagger';
+import { ApiAcceptedResponse, ApiNoContentResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DeleteDictionaryRequestParam } from './request/remove-dictionary.request';
 import { CreateDictionaryResponse } from './response/create-dictionary.response';
-import { ApiBadRequestResponse, ApiProtected } from '../__common/decorators';
 import { FetchDictionaryRequestParam } from './request/fetch-dictionary.request';
 import { FetchDictionaryResponse } from './response/fetch-dictionary.response';
 import { ActivityService } from '../activity/activity.service';
-import { STATUS } from '../__common/enums/status.enum';
+import { STATUS } from '/common/enums/status.enum';
 import { Dictionary } from './dictionary.entity';
-import { Env } from '../__common/env';
+import { Env } from '/common/env';
+import { ApiBadRequestResponse } from '/common/decorators/open-api-bad-request.decorator';
+import { ApiProtected } from '/common/decorators/open-api-protected-route.decorator';
+import { ApiCreatedResponse } from '/common/decorators/open-api-created-response.decorator';
+import { ApiUnprocessableEntityResponse } from '/common/decorators/open-api-unprocessable-response.decorator';
 
 @ApiTags('Dictionary')
 @Controller('dictionary')
@@ -56,7 +52,7 @@ export class DictionaryController {
   @ApiBadRequestResponse()
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
-  @ApiCreatedResponse({ type: CreateDictionaryResponse, description: 'Returns CREATED when successful' })
+  @ApiCreatedResponse({ type: CreateDictionaryResponse })
   async create(@Body() requestBody: CreateDictionaryRequest): Promise<CreateDictionaryResponse> {
     // TODO: when user data is available change the createdBy to the user's id
     const createdBy = -1;

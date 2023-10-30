@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SearchController } from './search.controller';
-import { SetupModule } from '../__common/setup/setup.module';
+import { SetupModule } from '/common/setup/setup.module';
 import { DictionaryModule } from '../dictionary/dictionary.module';
 import { DataSource } from 'typeorm';
 import { Dictionary } from '../dictionary/dictionary.entity';
@@ -9,7 +9,7 @@ import { Language } from '../translations/translation.enum';
 import { SearchDictionaryRequestParam } from './request/search-dictionary.request';
 import { CreateTranslationRequest } from '../translations/request/create-translation.request';
 import { Translation } from '../translations/translation.entity';
-import { STATUS } from '../__common/enums/status.enum';
+import { STATUS } from '/common/enums/status.enum';
 
 describe('SearchController', () => {
   let controller: SearchController;

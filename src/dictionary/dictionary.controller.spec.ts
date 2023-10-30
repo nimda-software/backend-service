@@ -1,13 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DictionaryController } from './dictionary.controller';
 import { DictionaryService } from './dictionary.service';
-import { SetupModule } from '../__common/setup/setup.module';
+import { SetupModule } from '../common/setup/setup.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Dictionary } from './dictionary.entity';
 import { DataSource } from 'typeorm';
 import { ActivityModule } from '../activity/activity.module';
 import { Language } from '../translations/translation.enum';
-import { STATUS } from '../__common/enums/status.enum';
+import { STATUS } from '../common/enums/status.enum';
 import { FetchDictionaryRequestParam } from './request/fetch-dictionary.request';
 import { FetchDictionaryResponse } from './response/fetch-dictionary.response';
 import { CreateDictionaryRequest } from './request/create-dictionary.request';

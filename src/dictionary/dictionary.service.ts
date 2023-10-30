@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Dictionary } from './dictionary.entity';
 import { Repository, ILike } from 'typeorm';
 import { Language } from '../translations/translation.enum';
-import { STATUS } from '../__common/enums/status.enum';
+import { STATUS } from '/common/enums/status.enum';
 
 @Injectable()
 export class DictionaryService {

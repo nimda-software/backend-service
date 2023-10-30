@@ -1,5 +1,5 @@
 import { Translation } from '../translation.entity';
-import { Dictionary } from '../../dictionary/dictionary.entity';
+import { Dictionary } from '/src/dictionary/dictionary.entity';
 import { CreateTranslationResponse } from './create-translation.response';
 
 export class FetchTranslationResponse extends CreateTranslationResponse {

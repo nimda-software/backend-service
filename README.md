@@ -57,6 +57,14 @@ $ npm run test:cov
 
 ## Database
 
+Use `docker-compose` from Auth-service to run MySQL locally.
+
+Create a new database
+
+```mysql
+CREATE DATABASE 'translations';
+```
+
 <section>
 <details>
 <summary>Migrations</summary>
