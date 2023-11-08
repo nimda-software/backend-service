@@ -37,7 +37,7 @@ export class DictionaryController {
     private readonly activityService: ActivityService,
   ) {}
 
-  @Get('find/by/:uuid')
+  @Get('find/:uuid')
   @ApiBadRequestResponse()
   @HttpCode(HttpStatus.OK)
   @ApiResponse({ status: HttpStatus.OK, description: 'Returns OK when successful', type: FetchDictionaryResponse })
@@ -70,7 +70,7 @@ export class DictionaryController {
   @ApiProtected()
   @ApiBadRequestResponse()
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Patch('update/by/:uuid')
+  @Patch('update/:uuid')
   @ApiNoContentResponse({ description: 'Returns NO_CONTENT when successful' })
   @ApiUnprocessableEntityResponse({ description: 'Returns UNPROCESSABLE_ENTITY when UUID is wrong' })
   async update(
@@ -98,7 +98,7 @@ export class DictionaryController {
   @ApiProtected()
   @ApiBadRequestResponse()
   @HttpCode(HttpStatus.ACCEPTED)
-  @Delete('delete/by/:uuid')
+  @Delete('delete/:uuid')
   @ApiAcceptedResponse({ description: 'Returns ACCEPTED when successful' })
   @ApiUnprocessableEntityResponse({ description: 'Returns UNPROCESSABLE_ENTITY when UUID is wrong' })
   async delete(@Param() param: DeleteDictionaryRequestParam): Promise<void> {

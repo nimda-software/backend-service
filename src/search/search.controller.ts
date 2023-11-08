@@ -10,7 +10,7 @@ import { ApiBadRequestResponse } from '/common/decorators/open-api-bad-request.d
 export class SearchController {
   constructor(private readonly dictionaryService: DictionaryService) {}
 
-  @Get('search/by')
+  @Get()
   @ApiBadRequestResponse()
   @HttpCode(HttpStatus.OK)
   @ApiResponse({

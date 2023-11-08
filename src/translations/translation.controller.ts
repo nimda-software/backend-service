@@ -47,7 +47,7 @@ export class TranslationController {
 
   @ApiBadRequestResponse()
   @HttpCode(HttpStatus.OK)
-  @Get('find/by/:uuid')
+  @Get('find/:uuid')
   @ApiNotFoundResponse({ description: 'Returns NOT_FOUND when no record found with the given uuid' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Returns OK when successful', type: FetchTranslationResponse })
   async findOneByUUID(@Param() param: FetchDictionaryRequestParam): Promise<FetchTranslationResponse> {
@@ -59,7 +59,7 @@ export class TranslationController {
 
   @ApiProtected()
   @ApiBadRequestResponse()
-  @Post('create/for/:uuid')
+  @Post('create/:uuid')
   @HttpCode(HttpStatus.CREATED)
   @ApiUnprocessableEntityResponse({ description: 'Returns UNPROCESSABLE_ENTITY when UUID is wrong' })
   @ApiCreatedResponse({ type: CreateDictionaryResponse, description: 'Returns CREATED when successful' })
@@ -86,7 +86,7 @@ export class TranslationController {
   @ApiProtected()
   @ApiBadRequestResponse()
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Patch('update/by/:uuid')
+  @Patch('update/:uuid')
   @ApiNoContentResponse({ description: 'Returns NO_CONTENT when successful' })
   @ApiUnprocessableEntityResponse({ description: 'Returns UNPROCESSABLE_ENTITY when UUID is wrong' })
   async update(@Param() param: UpdateTranslationRequestParam, @Body() requestBody: UpdateTranslationRequest) {
@@ -111,7 +111,7 @@ export class TranslationController {
   @ApiProtected()
   @ApiBadRequestResponse()
   @HttpCode(HttpStatus.ACCEPTED)
-  @Delete('delete/by/:uuid')
+  @Delete('delete/:uuid')
   @ApiAcceptedResponse({ description: 'Returns ACCEPTED when successful' })
   @ApiUnprocessableEntityResponse({ description: 'Returns UNPROCESSABLE_ENTITY when UUID is wrong' })
   async delete(@Param() param: DeleteTranslationRequestParam): Promise<void> {
