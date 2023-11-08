@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, HttpStatus, Param } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Query } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FetchDictionaryResponse } from '../dictionary/response/fetch-dictionary.response';
 import { DictionaryService } from '../dictionary/dictionary.service';
@@ -10,7 +10,7 @@ import { ApiBadRequestResponse } from '/common/decorators/open-api-bad-request.d
 export class SearchController {
   constructor(private readonly dictionaryService: DictionaryService) {}
 
-  @Get('search/by/:keyword/:language')
+  @Get('search/by')
   @ApiBadRequestResponse()
   @HttpCode(HttpStatus.OK)
   @ApiResponse({
@@ -19,8 +19,8 @@ export class SearchController {
     type: FetchDictionaryResponse,
     isArray: true,
   })
-  async searchByKeyword(@Param() param: SearchDictionaryRequestParam): Promise<FetchDictionaryResponse[]> {
-    const records = await this.dictionaryService.searchByKeyword(param.keyword, param.language);
+  async searchByKeyword(@Query() query: SearchDictionaryRequestParam): Promise<FetchDictionaryResponse[]> {
+    const records = await this.dictionaryService.searchByKeyword(query.keyword, query.language);
 
     return FetchDictionaryResponse.from(records);
   }

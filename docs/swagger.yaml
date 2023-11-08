@@ -344,19 +344,19 @@ paths:
       tags: *ref_1
       security:
         - bearer: []
-  /api/v1/search/search/by/{keyword}/{language}:
+  /api/v1/search/search/by:
     get:
       operationId: SearchController_searchByKeyword
       parameters:
         - name: keyword
           required: true
-          in: path
+          in: query
           description: What keyword to use
           schema:
             type: string
         - name: language
           required: true
-          in: path
+          in: query
           description: What language to use
           schema:
             enum:
