@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Dictionary } from './dictionary.entity';
-import { Repository, ILike } from 'typeorm';
-import { Language } from '../translations/translation.enum';
+import { ILike, Repository } from 'typeorm';
 import { STATUS } from '/common/enums/status.enum';
+import { Language } from '/src/translations/translation.enum';
 
 @Injectable()
 export class DictionaryService {
@@ -18,7 +18,7 @@ export class DictionaryService {
     });
   }
 
-  searchByKeyword(keyword: string, keywordLanguage: Language) {
+  searchByKeyword(keyword: string, language: Language, take: number, skip: number) {
     return this.dictionary.find({
       relations: ['translations'],
       select: ['id', 'uuid', 'value', 'description', 'language'],
@@ -26,12 +26,13 @@ export class DictionaryService {
         // ILike does case-insensitive search
         value: ILike(`${keyword}%`),
         status: STATUS.ACTIVE,
-        language: keywordLanguage,
+        language,
         translations: {
           status: STATUS.ACTIVE,
         },
       },
-      take: 32, // limit to 32 results
+      take,
+      skip,
     });
   }
 

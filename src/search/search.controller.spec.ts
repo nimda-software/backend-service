@@ -82,6 +82,8 @@ describe('SearchController', () => {
       const param: SearchDictionaryRequestParam = {
         keyword: 'hel',
         language: Language.EN,
+        take: 5,
+        skip: 0,
       };
       const result = await controller.searchByKeyword(param);
       expect(result).toBeDefined();
@@ -92,6 +94,8 @@ describe('SearchController', () => {
       const param: SearchDictionaryRequestParam = {
         keyword: 'No match',
         language: Language.EN,
+        take: 5,
+        skip: 0,
       };
       const result = await controller.searchByKeyword(param);
       expect(result).toBeDefined();
@@ -102,6 +106,8 @@ describe('SearchController', () => {
       const param: SearchDictionaryRequestParam = {
         keyword: 'Dude',
         language: Language.EN,
+        take: 5,
+        skip: 0,
       };
       const result = await controller.searchByKeyword(param);
       expect(result).toBeDefined();

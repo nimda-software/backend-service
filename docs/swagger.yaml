@@ -366,6 +366,20 @@ paths:
               - me
               - sv
             type: string
+        - name: take
+          required: false
+          in: query
+          description: How many MAX records to retrieve
+          schema:
+            default: 32
+            type: number
+        - name: skip
+          required: false
+          in: query
+          description: Records to skip
+          schema:
+            default: 0
+            type: number
       responses:
         '200':
           description: Returns OK when successful

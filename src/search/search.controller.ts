@@ -20,7 +20,7 @@ export class SearchController {
     isArray: true,
   })
   async searchByKeyword(@Query() query: SearchDictionaryRequestParam): Promise<FetchDictionaryResponse[]> {
-    const records = await this.dictionaryService.searchByKeyword(query.keyword, query.language);
+    const records = await this.dictionaryService.searchByKeyword(query.keyword, query.language, query.take, query.skip);
 
     return FetchDictionaryResponse.from(records);
   }

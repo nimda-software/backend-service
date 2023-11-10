@@ -116,11 +116,11 @@ describe('DictionaryService', () => {
       await service.markAsActive(dictionary01.uuid);
       await service.markAsActive(dictionary02.uuid);
 
-      const search01 = await service.searchByKeyword('h', Language.EN);
-      const search02 = await service.searchByKeyword('H', Language.EN);
-      const search03 = await service.searchByKeyword('hel', Language.EN);
-      const search04 = await service.searchByKeyword('Hell', Language.EN);
-      const search05 = await service.searchByKeyword('GoodBye', Language.EN);
+      const search01 = await service.searchByKeyword('h', Language.EN, 50, 0);
+      const search02 = await service.searchByKeyword('H', Language.EN, 50, 0);
+      const search03 = await service.searchByKeyword('hel', Language.EN, 50, 0);
+      const search04 = await service.searchByKeyword('Hell', Language.EN, 50, 0);
+      const search05 = await service.searchByKeyword('GoodBye', Language.EN, 50, 0);
 
       expect(search01).toHaveLength(1);
       expect(search02).toHaveLength(1);
@@ -163,7 +163,7 @@ describe('DictionaryService', () => {
       );
     });
     it('should return an empty list when no matching any records', async () => {
-      const search03 = await service.searchByKeyword('Goodbye, Morty', Language.EN);
+      const search03 = await service.searchByKeyword('Goodbye, Morty', Language.EN, 5, 0);
       expect(search03).toHaveLength(0);
       expect(search03).toEqual([]);
     });
