@@ -1,0 +1,191 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>@megrulad-ge/backend-service documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="./images/favicon.ico">
+	   <link rel="stylesheet" href="./styles/style.css">
+        <link rel="stylesheet" href="./styles/dark.css">
+    </head>
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top d-block d-sm-none">
+            <a href="./" class="navbar-brand">@megrulad-ge/backend-service documentation</a>
+            <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="hidden-xs menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content getting-started">
+                   <div class="content-data">
+
+<p align="center">
+  <a href='https://github.com/megrulad-ge/backend-service/blob/master/.npmrc#L1'>
+    <img src='https://img.shields.io/badge/NodeJs-v18.6.0-green.svg' alt='NodeJs-18.6.0' />
+  </a>
+  <a href='https://github.com/megrulad-ge/backend-service/blob/master/.npmrc#L2'>
+    <img src='https://img.shields.io/badge/NPM-v8.13.2-green.svg' alt='NPM-8.13.2' />
+  </a>
+  <a href='https://nestjs.com/'>
+    <img src='https://img.shields.io/badge/NestJs-v9.0.5-green.svg' alt='NestJs-9.0.5' />
+  </a>
+  <a href='https://github.com/megrulad-ge/backend-service/blob/master/docs/swagger.yaml'>
+    <img src='https://img.shields.io/badge/Swagger-yaml-green.svg' alt='Swagger-yaml' />
+  </a>
+  <a href='https://megrulad-ge.github.io/backend-service'>
+    <img src='https://img.shields.io/badge/Compo-docs-green.svg' alt='Compo-docs' />
+  </a>
+</p>
+
+<h2>Description</h2>
+<p>Template repository for backend services. With required boilerplate code.</p>
+<h2>Installation</h2>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-bash"># Set right NodeJS version
+$ nvm use
+# Install dependencies
+$ npm install</code></pre></div><h2>Running the service</h2>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-bash"># development
+$ npm run start
+
+# watch mode
+$ npm run start:dev
+
+# production mode
+$ npm run start:prod</code></pre></div><h2>Test</h2>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-bash"># unit tests
+$ npm run test
+
+# e2e tests
+$ npm run test:e2e
+
+# test coverage
+$ npm run test:cov</code></pre></div><h2>Database</h2>
+<p>Use <code>docker-compose</code> from Auth-service to run MySQL locally.</p>
+<p>Create a new database</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-mysql">CREATE DATABASE &#39;translations&#39;;</code></pre></div><section>
+<details>
+<summary>Migrations</summary>
+<p>
+There are migration scripts located in package.json.
+
+<p>In most common cases you will need to use <code>npm run migration:generate -- migrations/migration-name</code> to generate migrations (Which will result creating migrations/migration-name.ts). There are initial database setup and when you add some changes the command mentioned above will generate new migration scripts. It is required to check the generated query since it can cause data lost.</p>
+<p>When you need to run <code>npm run migrations</code>? Only when you make changes in entities or creating a new one.</p>
+<p>If you&#39;re actively adding new entities and need to test things faster you can modify <code>orm.config.ts</code> with the following</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">{
+  &quot;synchronize&quot;: true,
+  &quot;synchronizeOptions&quot;: {
+    &quot;force&quot;: true
+  }
+}</code></pre></div><p>With this config there are high change of data loss. Since it always removes tables and creates new ones. Only convenient for development when actively adding new entities.</p>
+<p>When this <code>sync</code> mode is enabled, and you try to generate migration - it won&#39;t be able to detect changes because <code>sync</code> mode makes sure that all tables are created/synced.</p>
+<p>Recommended: When you alter schema =&gt; <code>npm run migration:generate migrations/some-changes</code> =&gt; <code>npm run migrations</code>.</p>
+<p>It might require running <code>npm run build</code>.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-bash">$ npm run build
+$ npm run migration:generate migrations/migration-name</code></pre></div><p>P.S.</p>
+<p>You can always manually create migrations by running <code>npm run migration:create migrations/add-users-table</code> however in such cases you are responsible for the correctness of the script while <code>npm run migration:generate</code> will reverse-generate the migration from existing schemas/entities.</p>
+<p><code>NOTE:</code> Current migration scripts contains env variable for schema name which is dynamic name. Library does not support such thing. So when generating/creating new migration makes sure it is using proper schema name for different envs. Since, for every deployment env there is the same db but different schema.
+More <a href="./migrations/README.md">details</a></p>
+</p>
+
+<p>More <a href="https://typeorm.io/using-cli#create-a-new-migration">info</a></p>
+</details>
+
+<details>
+<summary>UML diagram</summary>
+
+<p><img src="./docs/db-diagram.svg" alt="Alt text" class="img-responsive"></p>
+</details>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 0;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'getting-started';
+            var COMPODOC_CURRENT_PAGE_URL = 'index.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script src="./js/libs/custom-elements.min.js"></script>
+       <script src="./js/libs/lit-html.js"></script>
+
+       <script src="./js/menu-wc.js" defer></script>
+       <script nomodule src="./js/menu-wc_es5.js" defer></script>
+
+       <script src="./js/libs/bootstrap-native.js"></script>
+
+       <script src="./js/libs/es6-shim.min.js"></script>
+       <script src="./js/libs/EventDispatcher.js"></script>
+       <script src="./js/libs/promise.min.js"></script>
+       <script src="./js/libs/zepto.min.js"></script>
+
+       <script src="./js/compodoc.js"></script>
+
+       <script src="./js/tabs.js"></script>
+       <script src="./js/menu.js"></script>
+       <script src="./js/libs/clipboard.min.js"></script>
+       <script src="./js/libs/prism.js"></script>
+       <script src="./js/sourceCode.js"></script>
+          <script src="./js/search/search.js"></script>
+          <script src="./js/search/lunr.min.js"></script>
+          <script src="./js/search/search-lunr.js"></script>
+          <script src="./js/search/search_index.js"></script>
+       <script src="./js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
